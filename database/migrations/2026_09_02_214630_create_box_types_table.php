@@ -11,22 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('farm_products', function (Blueprint $table) {
-             $table->id();
-
-            $table->foreignId('farm_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
-            $table->foreignId('product_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
+        Schema::create('box_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('code', 10)->unique();
+            $table->string('name');
             $table->boolean('active')->default(true);
-
             $table->timestamps();
-
-            $table->unique(['farm_id', 'product_id']);
         });
     }
 
@@ -35,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('farm_products');
+        Schema::dropIfExists('box_types');
     }
 };

@@ -18,12 +18,13 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->foreignId('farm_product_id')
+            $table->foreignId('farm_product_presentation_id')
                 ->constrained()
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
 
-            $table->integer('quantity');
-            $table->decimal('unit_price', 10, 4);
+            $table->unsignedInteger('boxes');
+
+            $table->decimal('unit_price', 12, 4);
             $table->decimal('subtotal', 12, 2);
 
             $table->timestamps();

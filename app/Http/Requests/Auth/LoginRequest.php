@@ -83,4 +83,16 @@ class LoginRequest extends FormRequest
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
+
+    /**
+     * Keep failed validation on the public Home modal when login starts there.
+     */
+    protected function getRedirectUrl(): string
+    {
+        if ($this->input('login_source') === 'home') {
+            return url('/');
+        }
+
+        return parent::getRedirectUrl();
+    }
 }

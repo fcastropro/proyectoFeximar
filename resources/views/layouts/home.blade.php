@@ -1988,12 +1988,42 @@
                                         <h3 style="color:#fff; font-size:24px;">Acceso Mayorista</h3>
                                     </div>
                                     <p style="text-align:center; color:#a0a0aa; margin-bottom:20px;">Consulta disponibilidad de cajas en tiempo real y realiza órdenes directas a finca.</p>
-                                    <form onsubmit="return false;">
+                                    <form method="POST" action="{{ route('login') }}">
+                                        @csrf
+                                        <input type="hidden" name="login_source" value="home">
+
                                         <label style="width:100%; margin-bottom:12px;">
-                                            <input type="text" class="text-field" placeholder="Usuario o Correo Corporativo" style="width:100%; padding:12px; background:#201e26; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px;">
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                class="text-field"
+                                                placeholder="Usuario o Correo Corporativo"
+                                                value="{{ old('email') }}"
+                                                required
+                                                autocomplete="username"
+                                                style="width:100%; padding:12px; background:#201e26; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px;"
+                                            >
+                                            @error('email')
+                                                <span style="display:block; color:#ff6b81; font-size:12px; margin-top:6px; text-align:left;">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
                                         </label>
                                         <label style="width:100%; margin-bottom:15px;">
-                                            <input type="password" class="text-field" placeholder="Contraseña:" style="width:100%; padding:12px; background:#201e26; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px;">
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                class="text-field"
+                                                placeholder="Contraseña:"
+                                                required
+                                                autocomplete="current-password"
+                                                style="width:100%; padding:12px; background:#201e26; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px;"
+                                            >
+                                            @error('password')
+                                                <span style="display:block; color:#ff6b81; font-size:12px; margin-top:6px; text-align:left;">
+                                                    {{ $message }}
+                                                </span>
+                                            @enderror
                                         </label>
                                         <div style="text-align:center;">
                                             <button type="submit" class="theme-btn" style="width:100%; padding:14px;"><i class="fa fa-lock"></i> INICIAR SESIÓN</button>
@@ -2086,5 +2116,13 @@
         });
     });
 </script>
+
+@if ($errors->has('email') || $errors->has('password'))
+<script>
+    $(document).ready(function () {
+        $('#signup-popup').addClass('unload-singnup-popup');
+    });
+</script>
+@endif
 </body>
 </html>

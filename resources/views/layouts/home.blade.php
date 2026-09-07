@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XTREME FLOWERS | Las Mejores Rosas y Flores de Ecuador</title>
+    <title>FEXIMAR | Las Mejores Rosas y Flores de Ecuador</title>
     <meta name="description" content="Comercializadora y exportadora líder de rosas ecuatorianas premium, flores de verano y follaje fresco. Exportación aérea mundial con calidad garantizada." />
     <meta name="keywords" content="rosas ecuatorianas, exportacion de rosas ecuador, flores de corte, premium roses ecuador, xtreme flowers, esmeralda flowers, gypsophila ecuador" />
 
@@ -116,7 +116,7 @@
             background: #141318 none repeat scroll 0 0;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border-radius: 8px 8px 0 0;
-            padding: 22px 35px;
+            padding: 16px 35px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
@@ -140,6 +140,13 @@
             align-items: center;
             gap: 15px;
             text-decoration: none;
+        }
+        .brand-logo-img {
+            max-height: 120px;
+            width: auto;
+            display: block;
+            object-fit: contain;
+            transition: all 0.3s ease;
         }
         .brand-emblem-svg {
             width: 48px;
@@ -318,6 +325,10 @@
             display: inline-flex !important;
             align-items: center !important;
             gap: 12px !important;
+        }
+
+        header.fancy-header.sticky .brand-logo-img {
+            max-height: 50px !important;
         }
 
         header.fancy-header.sticky .brand-emblem-svg {
@@ -538,9 +549,14 @@
         .fancy-card-inner-art {
             position: absolute;
             inset: 0;
-            opacity: 0.15;
+            opacity: 0.38;
             background-size: cover;
             background-position: center;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+        .fancy-service:hover .fancy-card-inner-art {
+            opacity: 0.62;
+            transform: scale(1.08);
         }
         .service-detail > span {
             color: #ff98b0 !important;
@@ -548,16 +564,19 @@
             letter-spacing: 1.5px;
             font-size: 11px;
             font-weight: 700;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.85);
         }
         .service-detail h3 {
             font-size: 22px;
             letter-spacing: 1px;
             font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.85);
         }
         .service-detail > h5 {
             color: #f1f1f1;
             letter-spacing: 2px;
             font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.85);
         }
         .service-detail i {
             display: inline-flex;
@@ -756,6 +775,9 @@
             position: relative;
             cursor: pointer;
             border: 3px solid #ffffff;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         .flower-oval-badge:hover {
             transform: rotate(0deg) scale(1.15);
@@ -768,52 +790,24 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 12px 8px;
+            padding: 14px 8px;
             color: #fff;
             text-align: center;
             position: relative;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 45%, transparent 75%);
+            transition: all 0.3s ease;
+        }
+        .flower-oval-badge:hover .swatch-content {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 80%);
         }
         .flower-oval-badge .swatch-label {
-            font-size: 9px;
-            font-weight: 800;
+            font-size: 10px;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            letter-spacing: 0.8px;
+            color: #ffffff !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.95);
             z-index: 2;
-        }
-
-        /* Variety Swatches Gradient Artworks */
-        .swatch-red-explorer {
-            background: radial-gradient(circle at 35% 35%, #e52d27 0%, #b31217 60%, #5b0507 100%);
-        }
-        .swatch-mondial-white {
-            background: radial-gradient(circle at 40% 40%, #ffffff 0%, #edebee 55%, #c8c2cf 100%);
-        }
-        .swatch-mondial-white .swatch-label {
-            color: #2b2b2b;
-            text-shadow: none;
-        }
-        .swatch-peach-kahala {
-            background: radial-gradient(circle at 40% 40%, #ffcba4 0%, #ff9e79 55%, #c85a32 100%);
-        }
-        .swatch-pink-hermosa {
-            background: radial-gradient(circle at 40% 40%, #ffb6c1 0%, #f06292 60%, #ad1457 100%);
-        }
-        .swatch-sunflower-yellow {
-            background: radial-gradient(circle at 40% 40%, #fff176 0%, #fbc02d 55%, #e65100 100%);
-        }
-        .swatch-deep-purple {
-            background: radial-gradient(circle at 40% 40%, #ba68c8 0%, #7b1fa2 60%, #4a148c 100%);
-        }
-        .swatch-gyp-white {
-            background: radial-gradient(circle at 40% 40%, #f8f9fa 0%, #dcdfe3 60%, #9ca3af 100%);
-        }
-        .swatch-gyp-white .swatch-label {
-            color: #333;
-            text-shadow: none;
-        }
-        .swatch-green-ruscus {
-            background: radial-gradient(circle at 40% 40%, #81c784 0%, #388e3c 60%, #1b5e20 100%);
         }
 
         /* Screenshot 4: FLOWER.STYLE Magazine Grid */
@@ -962,11 +956,11 @@
             inset: 0;
             background-size: cover;
             background-position: center;
-            opacity: 0.55;
+            opacity: 0.75;
             transition: transform 0.6s ease, opacity 0.6s ease;
         }
         .company-projects-list > ul li.active .company-project-bg-art {
-            opacity: 0.85;
+            opacity: 0.95;
             transform: scale(1.08);
         }
         .project-detail h4 a {
@@ -974,13 +968,15 @@
             font-size: 20px;
             font-weight: 800;
             letter-spacing: 0.8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
         }
         .project-detail > span i {
-            color: var(--rose-crimson);
+            color: #ff3366;
             font-weight: 800;
             font-size: 11px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
         }
 
         /* Partners & Certifications */
@@ -1026,7 +1022,12 @@
             color: #b0b0b8;
         }
         footer .parallax.dark {
-            background: #0d0c10 !important;
+            background-size: cover !important;
+            background-repeat: no-repeat !important;
+        }
+        footer .parallax.dark:before {
+            background: linear-gradient(180deg, rgba(13, 12, 16, 0.88) 0%, rgba(13, 12, 16, 0.80) 50%, rgba(13, 12, 16, 0.94) 100%) !important;
+            opacity: 1 !important;
         }
         footer h3 {
             color: #ffffff;
@@ -1073,6 +1074,15 @@
         }
         .bottom-line ul li a:hover {
             color: #fff !important;
+        }
+
+        /* Back to Top Floating Emblem */
+        #topcontrol {
+            z-index: 99999 !important;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        #topcontrol:hover {
+            transform: translateY(-6px) scale(1.08);
         }
     </style>
 </head>
@@ -1139,31 +1149,8 @@
             <div class="logo-menu">
 
                 <div class="logo">
-                    <a itemprop="url" href="{{ url('/') }}" class="brand-logo-wrap" title="Xtreme Flowers Ecuador">
-                        <!-- Stylized Rose Petal Crown Logo SVG (Matches Screenshot 1 & 5) -->
-                        <svg class="brand-emblem-svg" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- Center Rosebud -->
-                            <path d="M50 8 C44 14 42 22 47 30 C50 35 55 35 55 26 C55 18 52 12 50 8 Z" fill="#e91e63"/>
-                            <path d="M50 8 C56 14 58 22 53 30 C50 35 45 35 45 26 C45 18 48 12 50 8 Z" fill="#c2185b"/>
-                            <!-- Inner Lateral Leaves/Petals -->
-                            <path d="M42 20 C36 16 28 20 30 28 C32 35 40 34 43 28 C44 24 43 22 42 20 Z" fill="#9c27b0"/>
-                            <path d="M58 20 C64 16 72 20 70 28 C68 35 60 34 57 28 C56 24 57 22 58 20 Z" fill="#ad1457"/>
-                            <!-- Lower Lateral Roses -->
-                            <path d="M26 34 C19 32 15 40 18 46 C22 52 30 48 31 42 C32 37 29 35 26 34 Z" fill="#d81b60"/>
-                            <path d="M74 34 C81 32 85 40 82 46 C78 52 70 48 69 42 C68 37 71 35 74 34 Z" fill="#c2185b"/>
-                            <!-- Mid Petals -->
-                            <path d="M38 38 C32 39 30 48 35 53 C41 57 46 51 45 45 C44 41 41 39 38 38 Z" fill="#e91e63"/>
-                            <path d="M62 38 C68 39 70 48 65 53 C59 57 54 51 55 45 C56 41 59 39 62 38 Z" fill="#d81b60"/>
-                            <!-- Bottom Wings -->
-                            <path d="M22 50 C16 51 14 60 20 64 C26 67 31 61 30 55 C29 51 25 50 22 50 Z" fill="#ba68c8"/>
-                            <path d="M78 50 C84 51 86 60 80 64 C74 67 69 61 70 55 C71 51 75 50 78 50 Z" fill="#9c27b0"/>
-                            <path d="M40 56 C34 59 36 68 43 69 C49 69 51 62 48 57 C46 54 42 55 40 56 Z" fill="#c2185b"/>
-                            <path d="M60 56 C66 59 64 68 57 69 C51 69 49 62 52 57 C54 54 58 55 60 56 Z" fill="#e91e63"/>
-                        </svg>
-                        <div class="brand-text-block">
-                            <h2 class="brand-main-title"><span>XTREME</span> FLOWERS</h2>
-                            <span class="brand-tagline">FLOWERS &amp; FOLIAGE FROM ECUADOR</span>
-                        </div>
+                    <a itemprop="url" href="{{ url('/') }}" class="brand-logo-wrap" title="Feximar Ecuador">
+                        <img src="{{ asset('home/images/flores/logo-blanco.png') }}" alt="Feximar - Flowers from Ecuador" class="brand-logo-img" style="max-height: 120px;" />
                     </a>
                 </div>
 
@@ -1273,8 +1260,8 @@
             <div class="container">
                 <div class="responsive-logo">
                     <div class="logo">
-                        <a itemprop="url" href="{{ url('/') }}" style="color:#fff; font-family:'Raleway'; font-weight:900; font-size:18px;">
-                            <span style="color:var(--rose-crimson);">XTREME</span> FLOWERS
+                        <a itemprop="url" href="{{ url('/') }}" title="Feximar Ecuador">
+                            <img src="{{ asset('home/images/flores/logo.png') }}" alt="Feximar" style="max-height: 42px; width: auto; display: block;" />
                         </a>
                     </div>
                 </div>
@@ -1305,56 +1292,21 @@
 
                 <!-- Slide 1: Xtreme Flowers Dark Luxury Velvet (Captura 1) -->
                 <div class="ls-slide" data-ls="transition2d:35; timeshift:-1000; slidedelay: 7500;">
-                    <!-- Floral Dark Velvet Background -->
-                    <div class="ls-bg floral-hero-slide-1"></div>
+                    <!-- Slide 1 Background Image -->
+                    <img src="{{ asset('home/images/flores/slide1.jfif') }}" class="ls-bg" alt="Feximar Ecuador - Slide 1" />
 
-                    <!-- Watermark Emblem in Background -->
-                    <div class="ls-slide hero-watermark-bg" style="top:50%; left:50%;" data-ls="offsetxin:0; durationin:1200; fadein:true;">
-                        <svg viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
-                            <path d="M50 8 C44 14 42 22 47 30 C50 35 55 35 55 26 C55 18 52 12 50 8 Z" fill="#ffffff"/>
-                            <path d="M50 8 C56 14 58 22 53 30 C50 35 45 35 45 26 C45 18 48 12 50 8 Z" fill="#ffffff"/>
-                            <path d="M42 20 C36 16 28 20 30 28 C32 35 40 34 43 28 C44 24 43 22 42 20 Z" fill="#ffffff"/>
-                            <path d="M58 20 C64 16 72 20 70 28 C68 35 60 34 57 28 C56 24 57 22 58 20 Z" fill="#ffffff"/>
-                        </svg>
-                    </div>
-
-                    <!-- Slide 1 Top Rose Icon Crown -->
-                    <div class="ls-slide" style="top:150px; left:50%;" data-ls="offsetyout:top; offsetyin:top; durationin:800; delayin:100; easingin:easeOutBack; fadein:true;">
-                        <div style="text-align:center;">
-                            <svg style="width:90px; height:70px; margin:0 auto;" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M50 8 C44 14 42 22 47 30 C50 35 55 35 55 26 C55 18 52 12 50 8 Z" fill="#e91e63"/>
-                                <path d="M50 8 C56 14 58 22 53 30 C50 35 45 35 45 26 C45 18 48 12 50 8 Z" fill="#c2185b"/>
-                                <path d="M42 20 C36 16 28 20 30 28 C32 35 40 34 43 28 C44 24 43 22 42 20 Z" fill="#9c27b0"/>
-                                <path d="M58 20 C64 16 72 20 70 28 C68 35 60 34 57 28 C56 24 57 22 58 20 Z" fill="#ad1457"/>
-                                <path d="M26 34 C19 32 15 40 18 46 C22 52 30 48 31 42 C32 37 29 35 26 34 Z" fill="#d81b60"/>
-                                <path d="M74 34 C81 32 85 40 82 46 C78 52 70 48 69 42 C68 37 71 35 74 34 Z" fill="#c2185b"/>
-                                <path d="M38 38 C32 39 30 48 35 53 C41 57 46 51 45 45 C44 41 41 39 38 38 Z" fill="#e91e63"/>
-                                <path d="M62 38 C68 39 70 48 65 53 C59 57 54 51 55 45 C56 41 59 39 62 38 Z" fill="#d81b60"/>
-                                <path d="M22 50 C16 51 14 60 20 64 C26 67 31 61 30 55 C29 51 25 50 22 50 Z" fill="#ba68c8"/>
-                                <path d="M78 50 C84 51 86 60 80 64 C74 67 69 61 70 55 C71 51 75 50 78 50 Z" fill="#9c27b0"/>
-                                <path d="M40 56 C34 59 36 68 43 69 C49 69 51 62 48 57 C46 54 42 55 40 56 Z" fill="#c2185b"/>
-                                <path d="M60 56 C66 59 64 68 57 69 C51 69 49 62 52 57 C54 54 58 55 60 56 Z" fill="#e91e63"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <!-- Slide 1 Brand Text -->
-                    <div class="ls-slide" style="top:225px; left:50%; text-align:center; width:100%;" data-ls="offsetyout:top; durationin:900; delayin:200; easingin:easeOutBack; fadein:true;">
-                        <h4 style="font-family:'Raleway',sans-serif; font-size:28px; font-weight:900; letter-spacing:4px; text-transform:uppercase; color:#ffffff; margin:0;">
-                            <span style="color:#e91e63;">XTREME</span> FLOWERS
-                        </h4>
-                        <span style="font-family:'Lato',sans-serif; font-size:12px; font-weight:700; letter-spacing:4px; color:#f0d0d8; text-transform:uppercase;">
-                            flowers &amp; foliage from ecuador
-                        </span>
+                    <!-- Slide 1 Top Brand Logo (Feximar) -->
+                    <div class="ls-slide" style="top:165px; left:50%; text-align:center; width:100%;" data-ls="offsetyout:top; offsetyin:top; durationin:900; delayin:150; easingin:easeOutBack; fadein:true;">
+                        <img src="{{ asset('home/images/flores/logo-blanco.png') }}" alt="Feximar - Flowers from Ecuador" style="max-height:90px; width:auto; display:inline-block;" />
                     </div>
 
                     <!-- Slide 1 Main Headline: "LAS MEJORES FLORES DE ECUADOR" -->
-                    <h1 class="ls-slide" style="top:300px; left:50%; text-align:center; font-family:'Raleway','Montserrat',sans-serif; font-size:52px; font-weight:900; letter-spacing:2px; text-transform:uppercase; color:#ffffff; width:90%; line-height:1.15; text-shadow:0 6px 25px rgba(0,0,0,0.8);" data-ls="offsetxin:0; rotatexin:45deg; durationin:1000; delayin:400; easingin:easeOutExpo; fadein:true;">
+                    <h1 class="ls-slide" style="top:300px; left:50%; text-align:center; font-family:'Raleway','Montserrat',sans-serif; font-size:52px; font-weight:900; letter-spacing:2px; text-transform:uppercase; color:#ffffff; width:90%; line-height:1.15; text-shadow:0 6px 25px rgba(0,0,0,0.85);" data-ls="offsetxin:0; rotatexin:45deg; durationin:1000; delayin:400; easingin:easeOutExpo; fadein:true;">
                         LAS MEJORES FLORES DE ECUADOR
                     </h1>
 
                     <!-- Slide 1 Subtitle -->
-                    <p class="ls-slide" style="top:395px; left:50%; text-align:center; font-family:'Lato',sans-serif; font-size:18px; font-weight:400; color:#e0e0e0; width:720px; line-height:1.6; text-shadow:0 3px 10px rgba(0,0,0,0.8);" data-ls="offsetyin:bottom; durationin:1000; delayin:600; easingin:easeOutBack; fadein:true;">
+                    <p class="ls-slide" style="top:395px; left:50%; text-align:center; font-family:'Lato',sans-serif; font-size:18px; font-weight:400; color:#e0e0e0; width:720px; line-height:1.6; text-shadow:0 3px 10px rgba(0,0,0,0.85);" data-ls="offsetyin:bottom; durationin:1000; delayin:600; easingin:easeOutBack; fadein:true;">
                         Con 20 años en el mercado de flores te ofrecemos una gama amplia de productos premium cultivados en la mitad del mundo.
                     </p>
 
@@ -1373,28 +1325,28 @@
 
                 <!-- Slide 2: Esmeralda Clean Luxury "QUALITY • LONGEVITY • VALUE" (Captura 2) -->
                 <div class="ls-slide" data-ls="transition2d:40; timeshift:-1000; slidedelay: 7500;">
-                    <!-- Minimalist Bright Floral Background -->
-                    <div class="ls-bg floral-hero-slide-2"></div>
+                    <!-- Slide 2 Background Image -->
+                    <img src="{{ asset('home/images/flores/slide2.jpg') }}" class="ls-bg" alt="Feximar Ecuador - Slide 2" />
 
                     <!-- Giant Subtle Watermark (Screenshot 2) -->
-                    <div class="slide2-watermark-text">
+                    <div class="slide2-watermark-text" style="color:rgba(255,255,255,0.12);">
                         QUALITY &bull; LONGEVITY &bull; VALUE
                     </div>
 
                     <!-- Slide 2 Top Pill -->
                     <div class="ls-slide" style="top:180px; left:50%; text-align:center; width:100%;" data-ls="offsetyout:top; durationin:800; delayin:100; easingin:easeOutBack; fadein:true;">
-                        <span style="font-family:'Montserrat',sans-serif; font-size:12px; font-weight:800; letter-spacing:4px; text-transform:uppercase; color:#888; background:rgba(255,255,255,0.8); padding:8px 22px; border-radius:20px; border:1px solid #e0e0e0;">
+                        <span style="font-family:'Montserrat',sans-serif; font-size:12px; font-weight:800; letter-spacing:4px; text-transform:uppercase; color:#1a191d; background:rgba(255,255,255,0.92); padding:8px 24px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
                             ESTÁNDAR MUNDIAL DE EXPORTACIÓN
                         </span>
                     </div>
 
                     <!-- Slide 2 Main Headline -->
-                    <h2 class="ls-slide" style="top:250px; left:50%; text-align:center; font-family:'Cinzel','Playfair Display',serif; font-size:46px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:#1a191d; width:880px; line-height:1.2;" data-ls="offsetxin:0; durationin:1000; delayin:300; easingin:easeOutExpo; fadein:true;">
+                    <h2 class="ls-slide" style="top:250px; left:50%; text-align:center; font-family:'Cinzel','Playfair Display',serif; font-size:46px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:#ffffff; width:880px; line-height:1.2; text-shadow:0 4px 25px rgba(0,0,0,0.9);" data-ls="offsetxin:0; durationin:1000; delayin:300; easingin:easeOutExpo; fadein:true;">
                         EXCELENCIA FLORÍCOLA PARA MERCADOS GLOBALES
                     </h2>
 
                     <!-- Slide 2 Subtitle -->
-                    <p class="ls-slide" style="top:345px; left:50%; text-align:center; font-family:'Lato',sans-serif; font-size:17px; font-weight:400; color:#55555c; width:680px; line-height:1.7;" data-ls="offsetyin:bottom; durationin:1100; delayin:500; easingin:easeOutBack; fadein:true;">
+                    <p class="ls-slide" style="top:345px; left:50%; text-align:center; font-family:'Lato',sans-serif; font-size:17px; font-weight:400; color:#f5f5f7; width:680px; line-height:1.7; text-shadow:0 2px 12px rgba(0,0,0,0.9);" data-ls="offsetyin:bottom; durationin:1100; delayin:500; easingin:easeOutBack; fadein:true;">
                         Rosas de tallos largos y botones gigantes cultivadas en el corazón de los Andes ecuatorianos. Calidad superior, durabilidad en florero y colores vibrantes.
                     </p>
 
@@ -1424,7 +1376,7 @@
                             <!-- Box 1: Rosas Ecuatorianas -->
                             <div class="col-md-3 col-sm-6">
                                 <div class="fancy-service fancy-card-bg-1">
-                                    <div class="fancy-card-inner-art" style="background-image: radial-gradient(circle at 50% 50%, rgba(233, 30, 99, 0.4) 0%, transparent 70%);"></div>
+                                    <div class="fancy-card-inner-art" style="background-image: url('{{ asset('home/images/flores/rosas-ecuatorianas.jfif') }}');"></div>
                                     <div class="service-detail">
                                         <i>
                                             <svg style="width:52px; height:52px; margin:0 auto;" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1447,7 +1399,7 @@
                             <!-- Box 2: Flores de Verano & Follaje -->
                             <div class="col-md-3 col-sm-6">
                                 <div class="fancy-service fancy-card-bg-2">
-                                    <div class="fancy-card-inner-art" style="background-image: radial-gradient(circle at 50% 50%, rgba(76, 175, 80, 0.4) 0%, transparent 70%);"></div>
+                                    <div class="fancy-card-inner-art" style="background-image: url('{{ asset('home/images/flores/flores-y-follaje.jfif') }}');"></div>
                                     <div class="service-detail">
                                         <i>
                                             <svg style="width:52px; height:52px; margin:0 auto;" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1469,7 +1421,7 @@
                             <!-- Box 3: Exportación Mundial -->
                             <div class="col-md-3 col-sm-6">
                                 <div class="fancy-service fancy-card-bg-3">
-                                    <div class="fancy-card-inner-art" style="background-image: radial-gradient(circle at 50% 50%, rgba(33, 150, 243, 0.4) 0%, transparent 70%);"></div>
+                                    <div class="fancy-card-inner-art" style="background-image: url('{{ asset('home/images/flores/exportacion-mundial.jpg') }}');"></div>
                                     <div class="service-detail">
                                         <i>
                                             <svg style="width:52px; height:52px; margin:0 auto;" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1491,7 +1443,7 @@
                             <!-- Box 4: Fincas Asociadas -->
                             <div class="col-md-3 col-sm-6">
                                 <div class="fancy-service fancy-card-bg-4">
-                                    <div class="fancy-card-inner-art" style="background-image: radial-gradient(circle at 50% 50%, rgba(156, 39, 176, 0.4) 0%, transparent 70%);"></div>
+                                    <div class="fancy-card-inner-art" style="background-image: url('{{ asset('home/images/flores/fincas-asociadas.jfif') }}');"></div>
                                     <div class="service-detail">
                                         <i>
                                             <svg style="width:52px; height:52px; margin:0 auto;" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1685,56 +1637,56 @@
                 <div class="col-md-7">
                     <div class="poster-swatches-grid">
                         <!-- Swatch 1: Red Explorer Rose -->
-                        <div class="flower-oval-badge swatch-red-explorer" title="Rosa Explorer - Rojo Terciopelo">
+                        <div class="flower-oval-badge" style="background-image: url('{{ asset('home/images/flores/explorer.jfif') }}');" title="Rosa Explorer - Rojo Terciopelo">
                             <div class="swatch-content">
                                 <span class="swatch-label">Explorer</span>
                             </div>
                         </div>
 
                         <!-- Swatch 2: Mondial White Rose -->
-                        <div class="flower-oval-badge swatch-mondial-white" title="Rosa Mondial - Blanco Puro">
+                        <div class="flower-oval-badge" style="background-image: url('{{ asset('home/images/flores/mondial.jfif') }}');" title="Rosa Mondial - Blanco Puro">
                             <div class="swatch-content">
                                 <span class="swatch-label">Mondial</span>
                             </div>
                         </div>
 
                         <!-- Swatch 3: Kahala Peach Rose -->
-                        <div class="flower-oval-badge swatch-peach-kahala" title="Rosa Kahala - Melocotón Terracota">
+                        <div class="flower-oval-badge" style="background-image: url('{{ asset('home/images/flores/kahala.jfif') }}');" title="Rosa Kahala - Melocotón Terracota">
                             <div class="swatch-content">
                                 <span class="swatch-label">Kahala</span>
                             </div>
                         </div>
 
                         <!-- Swatch 4: Hermosa Pink Rose -->
-                        <div class="flower-oval-badge swatch-pink-hermosa" title="Rosa Hermosa - Rosa Pastel">
+                        <div class="flower-oval-badge" style="background-image: url('{{ asset('home/images/flores/hermosa.jfif') }}');" title="Rosa Hermosa - Rosa Pastel">
                             <div class="swatch-content">
                                 <span class="swatch-label">Hermosa</span>
                             </div>
                         </div>
 
-                        <!-- Swatch 5: High & Magic Yellow/Red -->
-                        <div class="flower-oval-badge swatch-sunflower-yellow" title="Girasoles &amp; Variedades Amarillas">
+                        <!-- Swatch 5: Girasoles / Sunflowers -->
+                        <div class="flower-oval-badge" style="background-image: url('{{ asset('home/images/flores/girasoles.jfif') }}');" title="Girasoles &amp; Variedades Amarillas">
                             <div class="swatch-content">
                                 <span class="swatch-label">Sunflowers</span>
                             </div>
                         </div>
 
                         <!-- Swatch 6: Deep Purple Rose -->
-                        <div class="flower-oval-badge swatch-deep-purple" title="Rosa Deep Purple - Lavanda Real">
+                        <div class="flower-oval-badge" style="background-image: url('{{ asset('home/images/flores/deep_purple.jfif') }}');" title="Rosa Deep Purple - Lavanda Real">
                             <div class="swatch-content">
                                 <span class="swatch-label">Deep Purple</span>
                             </div>
                         </div>
 
                         <!-- Swatch 7: Gypsophila Xlence -->
-                        <div class="flower-oval-badge swatch-gyp-white" title="Gypsophila Million Stars / Xlence">
+                        <div class="flower-oval-badge" style="background-image: url('{{ asset('home/images/flores/gipsophila.jfif') }}');" title="Gypsophila Million Stars / Xlence">
                             <div class="swatch-content">
                                 <span class="swatch-label">Gypsophila</span>
                             </div>
                         </div>
 
                         <!-- Swatch 8: Foliage Ruscus -->
-                        <div class="flower-oval-badge swatch-green-ruscus" title="Follaje Italiano Ruscus &amp; Eucalipto">
+                        <div class="flower-oval-badge" style="background-image: url('{{ asset('home/images/flores/foliage.jpg') }}');" title="Follaje Italiano Ruscus &amp; Eucalipto">
                             <div class="swatch-content">
                                 <span class="swatch-label">Foliage</span>
                             </div>
@@ -1834,7 +1786,7 @@
                         <ul>
                             <li class="start">
                                 <div class="company-project">
-                                    <div class="company-project-bg-art" style="background: radial-gradient(circle at center, #c61d3e 0%, #3e0714 80%);"></div>
+                                    <div class="company-project-bg-art" style="background-image: url('{{ asset('home/images/flores/coleccion-rosas-rojas-clasicas.jfif') }}');"></div>
                                     <div class="project-detail">
                                         <span><i>Tallos 50 - 100 cm</i></span>
                                         <h4><a href="#digital-poster" title="Rosas Rojas">Colección Rosas Rojas Clásicas (Explorer &amp; Freedom)</a></h4>
@@ -1844,7 +1796,7 @@
 
                             <li>
                                 <div class="company-project">
-                                    <div class="company-project-bg-art" style="background: radial-gradient(circle at center, #eae6ee 0%, #1c1822 80%);"></div>
+                                    <div class="company-project-bg-art" style="background-image: url('{{ asset('home/images/flores/coleccion-blancas-y-bodas.jfif') }}');"></div>
                                     <div class="project-detail">
                                         <span><i>Apertura Nupcial</i></span>
                                         <h4><a href="#digital-poster" title="Rosas Blancas">Colección Bodas &amp; Blancas (Mondial &amp; Playa Blanca)</a></h4>
@@ -1854,7 +1806,7 @@
 
                             <li>
                                 <div class="company-project">
-                                    <div class="company-project-bg-art" style="background: radial-gradient(circle at center, #ff9e79 0%, #3d1b11 80%);"></div>
+                                    <div class="company-project-bg-art" style="background-image: url('{{ asset('home/images/flores/garden-rosas-y-rosas-de-jardin-romanticas.jfif') }}');"></div>
                                     <div class="project-detail">
                                         <span><i>Aroma &amp; Volante</i></span>
                                         <h4><a href="#digital-poster" title="Garden Roses">Garden Roses &amp; Rosas de Jardín Románticas</a></h4>
@@ -1864,7 +1816,7 @@
 
                             <li>
                                 <div class="company-project">
-                                    <div class="company-project-bg-art" style="background: radial-gradient(circle at center, #9c27b0 0%, #1e0926 80%);"></div>
+                                    <div class="company-project-bg-art" style="background-image: url('{{ asset('home/images/flores/coleccion-tintados-exclusivos-gypsophila.jfif') }}');"></div>
                                     <div class="project-detail">
                                         <span><i>Diseño de Vanguardia</i></span>
                                         <h4><a href="#digital-poster" title="Tintadas">Colección Tintados Exclusivos &amp; Gypsophila</a></h4>
@@ -1919,7 +1871,7 @@
     <!-- FOOTER INSTITUCIONAL -->
     <footer id="contacto">
         <section class="block" style="padding: 70px 0 50px;">
-            <div class="parallax dark" data-velocity="-.2"></div>
+            <div class="parallax dark" data-velocity="-.2" style="background-image: url('{{ asset('home/images/flores/footer.jpg') }}');"></div>
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
@@ -1929,17 +1881,8 @@
                                 <div class="widget">
                                     <div class="about-widget">
                                         <div class="logo" style="width:100%; margin-bottom:15px;">
-                                            <a itemprop="url" href="{{ url('/') }}" class="brand-logo-wrap" title="Xtreme Flowers">
-                                                <svg class="brand-emblem-svg" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M50 8 C44 14 42 22 47 30 C50 35 55 35 55 26 C55 18 52 12 50 8 Z" fill="#e91e63"/>
-                                                    <path d="M50 8 C56 14 58 22 53 30 C50 35 45 35 45 26 C45 18 48 12 50 8 Z" fill="#c2185b"/>
-                                                    <path d="M42 20 C36 16 28 20 30 28 C32 35 40 34 43 28 C44 24 43 22 42 20 Z" fill="#9c27b0"/>
-                                                    <path d="M58 20 C64 16 72 20 70 28 C68 35 60 34 57 28 C56 24 57 22 58 20 Z" fill="#ad1457"/>
-                                                </svg>
-                                                <div class="brand-text-block">
-                                                    <h3 style="font-family:'Raleway'; font-size:20px; font-weight:900; color:#fff; margin:0;"><span style="color:var(--rose-crimson);">XTREME</span> FLOWERS</h3>
-                                                    <span style="font-size:9px; letter-spacing:2px; color:#aaa;">ECUADORIAN ROSES EXPORT</span>
-                                                </div>
+                                            <a itemprop="url" href="{{ url('/') }}" class="brand-logo-wrap" title="Feximar">
+                                                <img src="{{ asset('home/images/flores/logo-blanco.png') }}" alt="Feximar - Flowers from Ecuador" class="brand-logo-img" style="max-height: 90px; width: auto;" />
                                             </a>
                                         </div>
                                         <p itemprop="description" style="font-size:13px; line-height:1.7; color:#a0a0aa; margin-top:15px;">
@@ -2026,7 +1969,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 column">
-                        <span>&copy; 2026 <strong>XTREME FLOWERS ECUADOR</strong> &bull; Comercializadora de Rosas. Todos los derechos reservados.</span>
+                        <span>&copy; 2026 <strong>FEXIMAR ECUADOR</strong> &bull; Comercializadora de Rosas. Todos los derechos reservados.</span>
                     </div>
                     <div class="col-md-6 column">
                         <ul class="text-right">
@@ -2086,6 +2029,11 @@
 <script type="text/javascript" src="{{ asset('home/js/jquery-2.2.2.js') }}"></script>
 <script type="text/javascript" src="{{ asset('home/js/bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('home/js/scrolltopcontrol.js') }}"></script>
+<script>
+    if (typeof scrolltotop !== 'undefined') {
+        scrolltotop.controlHTML = '<img src="{{ asset('home/images/flores/logo-recortado.png') }}" alt="Subir al inicio" style="width:52px; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));" />';
+    }
+</script>
 <script type="text/javascript" src="{{ asset('home/js/scroll-up-bar.js') }}"></script>
 <script type="text/javascript" src="{{ asset('home/js/jquery.scrolly.js') }}"></script>
 <script type="text/javascript" src="{{ asset('home/js/owl.carousel.min.js') }}"></script>

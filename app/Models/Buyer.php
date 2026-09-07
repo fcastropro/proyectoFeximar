@@ -14,15 +14,28 @@ class Buyer extends Model
         'contact_name',
         'email',
         'phone',
+        'country_id',
         'country',
         'city',
         'address',
         'active',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
     }
 
     public function orders(): HasMany

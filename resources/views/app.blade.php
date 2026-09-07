@@ -14,6 +14,26 @@
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
+
+        <link
+            rel="stylesheet"
+            href="/admin-assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css"
+        >
+
+        <link
+            rel="stylesheet"
+            href="/admin-assets/css/style.css"
+        >
+
+        <link
+            rel="stylesheet"
+            href="/admin-assets/vendor/metismenu/css/metisMenu.min.css"
+        >
+
+        <link
+            rel="stylesheet"
+            href="/admin-assets/css/feximar-theme.css"
+        >
     </head>
     <body class="font-sans antialiased">
         @inertia

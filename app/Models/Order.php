@@ -8,13 +8,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
-    //
-     protected $fillable = [
+    public const STATUSES = [
+        'pending',
+        'confirmed',
+        'processing',
+        'shipped',
+        'cancelled',
+    ];
+
+    protected $fillable = [
         'buyer_id',
         'status',
         'total',
         'notes',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'total' => 'decimal:2',
+        ];
+    }
 
     public function buyer(): BelongsTo
     {

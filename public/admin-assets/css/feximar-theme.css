@@ -1,0 +1,481 @@
+/**
+ * FEXIMAR Admin Theme
+ * Overrides Eres template colors without editing style.css
+ */
+
+:root {
+    --feximar-bg: #0D0D10;
+    --feximar-surface: #15151A;
+    --feximar-surface-2: #1B1B22;
+    --feximar-primary: #D7194B;
+    --feximar-primary-hover: #B9143F;
+    --feximar-text: #FFFFFF;
+    --feximar-text-muted: #B8B8C2;
+    --feximar-border: #2B2B33;
+}
+
+/* Scope admin chrome so public/auth pages are untouched */
+body:has(#main-wrapper.feximar-admin) {
+    background-color: var(--feximar-bg) !important;
+    color: var(--feximar-text);
+}
+
+#main-wrapper.feximar-admin {
+    background-color: var(--feximar-bg);
+    color: var(--feximar-text);
+}
+
+/* ---------- Nav header / brand ---------- */
+#main-wrapper.feximar-admin .nav-header {
+    background-color: var(--feximar-bg) !important;
+    border-bottom: 1px solid var(--feximar-border);
+}
+
+#main-wrapper.feximar-admin .nav-header .brand-logo,
+#main-wrapper.feximar-admin .nav-header .brand-logo .feximar-brand {
+    color: var(--feximar-text) !important;
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+#main-wrapper.feximar-admin .nav-header .hamburger .line {
+    background-color: var(--feximar-text) !important;
+}
+
+/* ---------- Header ---------- */
+#main-wrapper.feximar-admin .header,
+#main-wrapper.feximar-admin .header-content {
+    background-color: var(--feximar-bg) !important;
+    border-bottom: 1px solid var(--feximar-border);
+    color: var(--feximar-text);
+}
+
+#main-wrapper.feximar-admin .header .header-left h4,
+#main-wrapper.feximar-admin .header .header-info span {
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .header .header-info small {
+    color: var(--feximar-text-muted) !important;
+}
+
+#main-wrapper.feximar-admin .header .nav-link {
+    color: var(--feximar-text-muted) !important;
+}
+
+#main-wrapper.feximar-admin .header .dropdown-menu {
+    background-color: var(--feximar-surface) !important;
+    border-color: var(--feximar-border) !important;
+}
+
+#main-wrapper.feximar-admin .header .dropdown-item {
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .header .dropdown-item:hover,
+#main-wrapper.feximar-admin .header .dropdown-item:focus {
+    background-color: var(--feximar-surface-2) !important;
+    color: var(--feximar-primary) !important;
+}
+
+/* ---------- Sidebar ---------- */
+#main-wrapper.feximar-admin .deznav {
+    background-color: var(--feximar-surface) !important;
+    border-right: 1px solid var(--feximar-border);
+}
+
+#main-wrapper.feximar-admin .deznav .metismenu > li > a,
+#main-wrapper.feximar-admin .deznav .metismenu ul a,
+#main-wrapper.feximar-admin .deznav .metismenu .nav-text {
+    color: var(--feximar-text-muted) !important;
+}
+
+#main-wrapper.feximar-admin .deznav .metismenu > li > a i,
+#main-wrapper.feximar-admin .deznav .metismenu > li > a svg {
+    color: var(--feximar-text-muted) !important;
+}
+
+#main-wrapper.feximar-admin .deznav .nav-label {
+    color: var(--feximar-text-muted) !important;
+    opacity: 0.85;
+}
+
+#main-wrapper.feximar-admin .deznav .metismenu > li > a:hover,
+#main-wrapper.feximar-admin .deznav .metismenu ul a:hover {
+    background-color: var(--feximar-surface-2) !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .deznav .metismenu > li > a:hover i,
+#main-wrapper.feximar-admin .deznav .metismenu > li.mm-active > a i,
+#main-wrapper.feximar-admin .deznav .metismenu > li > a.mm-active i,
+#main-wrapper.feximar-admin .deznav .metismenu > li.mm-active > a,
+#main-wrapper.feximar-admin .deznav .metismenu > li > a.mm-active,
+#main-wrapper.feximar-admin .deznav .metismenu > li.mm-active > a .nav-text,
+#main-wrapper.feximar-admin .deznav .metismenu ul a.mm-active,
+#main-wrapper.feximar-admin .deznav .metismenu ul a.active,
+#main-wrapper.feximar-admin .deznav .metismenu ul a[aria-current="page"] {
+    color: var(--feximar-primary) !important;
+}
+
+#main-wrapper.feximar-admin .deznav .metismenu > li.mm-active > a,
+#main-wrapper.feximar-admin .deznav .metismenu > li > a.mm-active,
+#main-wrapper.feximar-admin .deznav .metismenu ul a:hover {
+    background-color: var(--feximar-surface-2) !important;
+}
+
+#main-wrapper.feximar-admin .deznav .metismenu ul {
+    background-color: transparent !important;
+}
+
+#main-wrapper.feximar-admin .deznav .metismenu a.has-arrow:after {
+    border-color: var(--feximar-text-muted) !important;
+}
+
+/* Inertia Link active state fallback via current path styling handled by mm-active when JS runs;
+   reinforce magenta for hovered/active children */
+#main-wrapper.feximar-admin .deznav .metismenu ul a:hover,
+#main-wrapper.feximar-admin .deznav .metismenu ul a:focus {
+    color: var(--feximar-primary) !important;
+}
+
+/* ---------- Content ---------- */
+#main-wrapper.feximar-admin .content-body {
+    background-color: var(--feximar-bg) !important;
+    color: var(--feximar-text);
+}
+
+#main-wrapper.feximar-admin .page-titles {
+    background-color: transparent !important;
+    border-color: var(--feximar-border) !important;
+}
+
+#main-wrapper.feximar-admin .welcome-text h4,
+#main-wrapper.feximar-admin .content-body h1,
+#main-wrapper.feximar-admin .content-body h2,
+#main-wrapper.feximar-admin .content-body h3,
+#main-wrapper.feximar-admin .content-body h4,
+#main-wrapper.feximar-admin .content-body h5,
+#main-wrapper.feximar-admin .card-title {
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .welcome-text span,
+#main-wrapper.feximar-admin .text-muted {
+    color: var(--feximar-text-muted) !important;
+}
+
+/* ---------- Cards ---------- */
+#main-wrapper.feximar-admin .card {
+    background-color: var(--feximar-surface) !important;
+    border: 1px solid var(--feximar-border) !important;
+    color: var(--feximar-text);
+    box-shadow: none !important;
+}
+
+#main-wrapper.feximar-admin .card-header {
+    background-color: var(--feximar-surface-2) !important;
+    border-bottom: 1px solid var(--feximar-border) !important;
+    color: var(--feximar-text);
+}
+
+#main-wrapper.feximar-admin .card-body {
+    background-color: transparent !important;
+    color: var(--feximar-text);
+}
+
+#main-wrapper.feximar-admin .widget-stat.card {
+    border-color: var(--feximar-border) !important;
+}
+
+#main-wrapper.feximar-admin .widget-stat.card.bg-primary {
+    background-color: var(--feximar-primary) !important;
+}
+
+#main-wrapper.feximar-admin .widget-stat.card.bg-success,
+#main-wrapper.feximar-admin .widget-stat.card.bg-warning,
+#main-wrapper.feximar-admin .widget-stat.card.bg-info {
+    background-color: var(--feximar-surface-2) !important;
+    border-color: var(--feximar-border) !important;
+}
+
+/* ---------- Tables ---------- */
+#main-wrapper.feximar-admin .table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--feximar-text);
+    --bs-table-border-color: var(--feximar-border);
+    --bs-table-striped-bg: var(--feximar-surface-2);
+    --bs-table-striped-color: var(--feximar-text);
+    --bs-table-hover-bg: var(--feximar-surface-2);
+    --bs-table-hover-color: var(--feximar-text);
+    color: var(--feximar-text) !important;
+    border-color: var(--feximar-border) !important;
+}
+
+#main-wrapper.feximar-admin .table > :not(caption) > * > * {
+    background-color: transparent !important;
+    color: var(--feximar-text) !important;
+    border-bottom-color: var(--feximar-border) !important;
+    box-shadow: none !important;
+}
+
+#main-wrapper.feximar-admin .table thead th,
+#main-wrapper.feximar-admin .table thead td {
+    background-color: var(--feximar-surface-2) !important;
+    color: var(--feximar-text) !important;
+    border-bottom-color: var(--feximar-border) !important;
+}
+
+#main-wrapper.feximar-admin .table-hover > tbody > tr:hover > * {
+    background-color: var(--feximar-surface-2) !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .table-responsive {
+    border-color: var(--feximar-border);
+}
+
+/* ---------- Buttons ---------- */
+#main-wrapper.feximar-admin .btn-primary {
+    background-color: var(--feximar-primary) !important;
+    border-color: var(--feximar-primary) !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .btn-primary:hover,
+#main-wrapper.feximar-admin .btn-primary:focus,
+#main-wrapper.feximar-admin .btn-primary:active,
+#main-wrapper.feximar-admin .btn-primary.active {
+    background-color: var(--feximar-primary-hover) !important;
+    border-color: var(--feximar-primary-hover) !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .btn-light {
+    background-color: var(--feximar-surface-2) !important;
+    border-color: var(--feximar-border) !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .btn-light:hover {
+    background-color: var(--feximar-border) !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .btn-danger {
+    background-color: #8B1E2D !important;
+    border-color: #8B1E2D !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .btn-danger:hover {
+    background-color: var(--feximar-primary-hover) !important;
+    border-color: var(--feximar-primary-hover) !important;
+}
+
+#main-wrapper.feximar-admin .btn-xs.sharp {
+    color: var(--feximar-text) !important;
+}
+
+/* ---------- Forms ---------- */
+#main-wrapper.feximar-admin .form-label,
+#main-wrapper.feximar-admin .form-check-label {
+    color: var(--feximar-text-muted) !important;
+}
+
+#main-wrapper.feximar-admin .form-control,
+#main-wrapper.feximar-admin .form-select,
+#main-wrapper.feximar-admin select.form-control,
+#main-wrapper.feximar-admin textarea.form-control {
+    background-color: var(--feximar-surface) !important;
+    border-color: var(--feximar-border) !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .form-control::placeholder {
+    color: var(--feximar-text-muted) !important;
+    opacity: 0.8;
+}
+
+#main-wrapper.feximar-admin .form-control:focus,
+#main-wrapper.feximar-admin .form-select:focus,
+#main-wrapper.feximar-admin select.form-control:focus,
+#main-wrapper.feximar-admin textarea.form-control:focus {
+    background-color: var(--feximar-surface) !important;
+    border-color: var(--feximar-primary) !important;
+    color: var(--feximar-text) !important;
+    box-shadow: 0 0 0 0.15rem rgba(215, 25, 75, 0.25) !important;
+}
+
+#main-wrapper.feximar-admin .form-control:disabled,
+#main-wrapper.feximar-admin select.form-control:disabled {
+    background-color: var(--feximar-surface-2) !important;
+    color: var(--feximar-text-muted) !important;
+    opacity: 0.85;
+}
+
+#main-wrapper.feximar-admin .form-check-input {
+    background-color: var(--feximar-surface) !important;
+    border-color: var(--feximar-border) !important;
+}
+
+#main-wrapper.feximar-admin .form-check-input:checked {
+    background-color: var(--feximar-primary) !important;
+    border-color: var(--feximar-primary) !important;
+}
+
+#main-wrapper.feximar-admin .form-control.is-invalid,
+#main-wrapper.feximar-admin .was-validated .form-control:invalid {
+    border-color: #E35D6A !important;
+}
+
+#main-wrapper.feximar-admin .invalid-feedback {
+    color: #E35D6A !important;
+}
+
+/* Select option list (where browser allows) */
+#main-wrapper.feximar-admin select.form-control option {
+    background-color: var(--feximar-surface);
+    color: var(--feximar-text);
+}
+
+/* ---------- Badges ---------- */
+#main-wrapper.feximar-admin .badge-success {
+    background-color: #1F7A4D !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .badge-danger {
+    background-color: var(--feximar-primary) !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .badge-primary {
+    background-color: var(--feximar-primary) !important;
+    color: var(--feximar-text) !important;
+}
+
+/* ---------- Alerts ---------- */
+#main-wrapper.feximar-admin .alert-success {
+    background-color: rgba(31, 122, 77, 0.2) !important;
+    border-color: #1F7A4D !important;
+    color: var(--feximar-text) !important;
+}
+
+#main-wrapper.feximar-admin .alert-danger {
+    background-color: rgba(215, 25, 75, 0.15) !important;
+    border-color: var(--feximar-primary) !important;
+    color: var(--feximar-text) !important;
+}
+
+/* ---------- Links ---------- */
+#main-wrapper.feximar-admin a:not(.btn):not(.dropdown-item):not(.nav-link):not(.brand-logo) {
+    color: var(--feximar-primary);
+}
+
+#main-wrapper.feximar-admin a:not(.btn):not(.dropdown-item):not(.nav-link):not(.brand-logo):hover {
+    color: var(--feximar-primary-hover);
+}
+
+/* ---------- Footer ---------- */
+#main-wrapper.feximar-admin .footer {
+    background-color: var(--feximar-bg) !important;
+    border-top: 1px solid var(--feximar-border);
+    color: var(--feximar-text-muted);
+}
+
+#main-wrapper.feximar-admin .footer .copyright,
+#main-wrapper.feximar-admin .footer p {
+    color: var(--feximar-text-muted) !important;
+}
+
+/* ---------- Dividers / misc ---------- */
+#main-wrapper.feximar-admin hr {
+    border-color: var(--feximar-border) !important;
+    opacity: 1;
+}
+
+#main-wrapper.feximar-admin .border,
+#main-wrapper.feximar-admin .border-top,
+#main-wrapper.feximar-admin .border-bottom,
+#main-wrapper.feximar-admin .border-start,
+#main-wrapper.feximar-admin .border-end {
+    border-color: var(--feximar-border) !important;
+}
+
+@media (max-width: 991.98px) {
+    #main-wrapper.feximar-admin .deznav {
+        background-color: var(--feximar-surface) !important;
+    }
+}
+
+/* Localized Tailwind Preflight softeners inside admin only */
+#main-wrapper.feximar-admin .btn,
+#main-wrapper.feximar-admin button.btn {
+    text-transform: none;
+}
+
+#main-wrapper.feximar-admin img,
+#main-wrapper.feximar-admin svg {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#main-wrapper.feximar-admin .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#main-wrapper.feximar-admin .content-body,
+#main-wrapper.feximar-admin .container-fluid {
+    max-width: 100%;
+}
+
+#main-wrapper.feximar-admin.menu-toggle {
+    overflow-x: hidden;
+}
+
+/* ---------- Table action buttons ---------- */
+#main-wrapper.feximar-admin .admin-actions-column {
+    min-width: 240px;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+#main-wrapper.feximar-admin .admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+#main-wrapper.feximar-admin .admin-actions .btn {
+    min-width: 70px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    border-radius: 0.375rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#main-wrapper.feximar-admin .admin-actions .btn.btn-xs,
+#main-wrapper.feximar-admin .admin-actions .btn.sharp {
+    min-height: 32px;
+    height: auto;
+    width: auto;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.375rem;
+}
+
+@media (max-width: 767.98px) {
+    #main-wrapper.feximar-admin .admin-actions-column {
+        min-width: 160px;
+        white-space: normal;
+    }
+}

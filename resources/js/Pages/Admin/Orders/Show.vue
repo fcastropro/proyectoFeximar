@@ -96,13 +96,15 @@ const statusLabel = (status) => props.statusLabels[status] ?? status
                                         <th><strong>Longitud</strong></th>
                                         <th><strong>Tipo de caja</strong></th>
                                         <th><strong>Cantidad</strong></th>
+                                        <th><strong>Tallos/caja</strong></th>
+                                        <th><strong>Total tallos</strong></th>
                                         <th><strong>Precio unitario</strong></th>
                                         <th><strong>Subtotal</strong></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-if="!order.details?.length">
-                                        <td colspan="9" class="text-center text-muted">
+                                        <td colspan="11" class="text-center text-muted">
                                             Sin líneas.
                                         </td>
                                     </tr>
@@ -114,6 +116,8 @@ const statusLabel = (status) => props.statusLabels[status] ?? status
                                         <td>{{ detail.stem_length_cm ? `${detail.stem_length_cm} cm` : '—' }}</td>
                                         <td>{{ detail.box_type || '—' }}</td>
                                         <td>{{ detail.quantity }}</td>
+                                        <td>{{ detail.stems_per_box ?? '—' }}</td>
+                                        <td>{{ detail.total_stems ?? '—' }}</td>
                                         <td>{{ Number(detail.unit_price).toFixed(2) }}</td>
                                         <td>{{ Number(detail.subtotal).toFixed(2) }}</td>
                                     </tr>

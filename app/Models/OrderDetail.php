@@ -11,7 +11,9 @@ class OrderDetail extends Model
         'order_id',
         'farm_product_availability_id',
         'box_type_id',
-        'quantity',
+        'boxes',
+        'stems_per_box',
+        'total_stems',
         'unit_price',
         'subtotal',
     ];
@@ -19,7 +21,9 @@ class OrderDetail extends Model
     protected function casts(): array
     {
         return [
-            'quantity' => 'integer',
+            'boxes' => 'integer',
+            'stems_per_box' => 'integer',
+            'total_stems' => 'integer',
             'unit_price' => 'decimal:4',
             'subtotal' => 'decimal:2',
         ];

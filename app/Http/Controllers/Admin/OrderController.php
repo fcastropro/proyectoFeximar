@@ -105,7 +105,9 @@ class OrderController extends Controller
                         'variety_name' => $meta['variety_name'],
                         'stem_length_cm' => $meta['stem_length_cm'],
                         'box_type' => $detail->boxType?->code ?? $detail->boxType?->name,
-                        'quantity' => $detail->quantity,
+                        'quantity' => $detail->boxes,
+                        'stems_per_box' => $detail->stems_per_box,
+                        'total_stems' => $detail->total_stems,
                         'unit_price' => $detail->unit_price,
                         'subtotal' => $detail->subtotal,
                     ];
@@ -128,7 +130,7 @@ class OrderController extends Controller
                 'details' => $order->details->map(fn (OrderDetail $detail) => [
                     'farm_product_availability_id' => $detail->farm_product_availability_id,
                     'box_type_id' => $detail->box_type_id,
-                    'quantity' => $detail->quantity,
+                    'quantity' => $detail->boxes,
                     'unit_price' => (float) $detail->unit_price,
                 ]),
             ],
@@ -208,11 +210,14 @@ class OrderController extends Controller
                 'integer',
                 Rule::exists('box_types', 'id')->where('active', true),
             ],
+            // El formulario envía quantity (= cantidad de cajas).
             'details.*.quantity' => ['required', 'integer', 'min:1'],
             'details.*.unit_price' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $validator->after(function ($validator) use ($request) {
+        $lineSnapshots = [];
+
+        $validator->after(function ($validator) use ($request, &$lineSnapshots) {
             if ($validator->errors()->isNotEmpty()) {
                 return;
             }
@@ -226,6 +231,12 @@ class OrderController extends Controller
                 ->all();
 
             $availabilities = FarmProductAvailability::query()
+                ->with([
+                    'presentation:id,farm_product_id,stem_length_cm',
+                    'presentation.farmProduct:id,product_id',
+                    'presentation.farmProduct.product:id,name,variety_id,variety',
+                    'presentation.farmProduct.product.variety:id,name',
+                ])
                 ->whereIn('id', $availabilityIds)
                 ->get(['id', 'farm_product_presentation_id', 'available_stems', 'year', 'week_number'])
                 ->keyBy('id');
@@ -249,7 +260,7 @@ class OrderController extends Controller
             foreach ($details as $index => $detail) {
                 $availabilityId = (int) $detail['farm_product_availability_id'];
                 $boxTypeId = (int) $detail['box_type_id'];
-                $quantity = (int) $detail['quantity'];
+                $boxes = (int) $detail['quantity'];
 
                 $availability = $availabilities->get($availabilityId);
 
@@ -274,8 +285,16 @@ class OrderController extends Controller
                     continue;
                 }
 
-                $lineStems = $quantity * (int) $config->stems_per_box;
-                $stemsByAvailability[$availabilityId] = ($stemsByAvailability[$availabilityId] ?? 0) + $lineStems;
+                $stemsPerBox = (int) $config->stems_per_box;
+                $totalStems = $boxes * $stemsPerBox;
+
+                // Snapshot recalculado en backend (no confiar en Vue).
+                $lineSnapshots[$index] = [
+                    'stems_per_box' => $stemsPerBox,
+                    'total_stems' => $totalStems,
+                ];
+
+                $stemsByAvailability[$availabilityId] = ($stemsByAvailability[$availabilityId] ?? 0) + $totalStems;
                 $firstIndexByAvailability[$availabilityId] ??= $index;
             }
 
@@ -285,13 +304,11 @@ class OrderController extends Controller
 
                 if ($requestedStems > $availableStems) {
                     $index = $firstIndexByAvailability[$availabilityId];
-                    $weekLabel = $availability
-                        ? "Semana {$availability->week_number}/{$availability->year}"
-                        : "disponibilidad #{$availabilityId}";
+                    $label = $this->availabilityProductLabel($availability);
 
                     $validator->errors()->add(
                         "details.{$index}.quantity",
-                        "Los tallos solicitados ({$requestedStems}) superan los disponibles ({$availableStems}) para {$weekLabel}."
+                        "La cantidad solicitada supera la disponibilidad semanal de {$label}."
                     );
                 }
             }
@@ -305,16 +322,23 @@ class OrderController extends Controller
         $details = [];
         $total = 0;
 
-        foreach ($validated['details'] as $detail) {
-            $quantity = (int) $detail['quantity'];
+        foreach ($validated['details'] as $index => $detail) {
+            $boxes = (int) $detail['quantity'];
             $unitPrice = round((float) $detail['unit_price'], 4);
-            $subtotal = round($quantity * $unitPrice, 2);
+            $subtotal = round($boxes * $unitPrice, 2);
             $total += $subtotal;
+
+            $snapshot = $lineSnapshots[$index] ?? [
+                'stems_per_box' => 0,
+                'total_stems' => 0,
+            ];
 
             $details[] = [
                 'farm_product_availability_id' => (int) $detail['farm_product_availability_id'],
                 'box_type_id' => (int) $detail['box_type_id'],
-                'quantity' => $quantity,
+                'boxes' => $boxes,
+                'stems_per_box' => $snapshot['stems_per_box'],
+                'total_stems' => $snapshot['total_stems'],
                 'unit_price' => $unitPrice,
                 'subtotal' => $subtotal,
             ];
@@ -327,6 +351,29 @@ class OrderController extends Controller
             'total' => number_format($total, 2, '.', ''),
             'details' => $details,
         ];
+    }
+
+    private function availabilityProductLabel(?FarmProductAvailability $availability): string
+    {
+        if (! $availability) {
+            return 'esta disponibilidad';
+        }
+
+        $presentation = $availability->presentation;
+        $product = $presentation?->farmProduct?->product;
+        $varietyName = $product?->relationLoaded('variety')
+            ? ($product->getRelation('variety')?->name)
+            : null;
+        $varietyName = $varietyName
+            ?? $product?->getAttributes()['variety']
+            ?? $product?->name
+            ?? 'Producto';
+
+        $length = $presentation?->stem_length_cm;
+
+        return $length
+            ? "{$varietyName} {$length} cm"
+            : $varietyName;
     }
 
     /**

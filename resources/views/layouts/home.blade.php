@@ -1227,14 +1227,14 @@
                     <div class="quick-contact">
                         <ul>
                             <li>
-                                <img src="{{ asset('home/images/resource/phone.png') }}" alt="" />
-                                <span>+593 2 299-8800</span>
+                                <img src="{{ asset('home/images/resource/phone.png') }}" alt="Teléfono Exportaciones" />
+                                <span>+593 (2) 999676644</span>
                                 <p>Ventas Internacionales</p>
                             </li>
                             <li>
-                                <img src="{{ asset('home/images/resource/sms.png') }}" alt="" />
-                                <span>sales@xtremeflowers.com</span>
-                                <p>Exportaciones</p>
+                                <img src="{{ asset('home/images/resource/sms.png') }}" alt="Email Ventas" />
+                                <span>feximaruioec@gmail.com</span>
+                                <p>Departamento de Exportación</p>
                             </li>
                         </ul>
                     </div>
@@ -1246,7 +1246,7 @@
                 <div class="responsive-logo">
                     <div class="logo">
                         <a itemprop="url" href="{{ url('/') }}" title="Feximar Ecuador">
-                            <img src="{{ asset('home/images/flores/logo.png') }}" alt="Feximar" style="max-height: 42px; width: auto; display: block;" />
+                            <img src="{{ asset('home/images/flores/logo-blanco.png') }}" alt="Feximar" style="max-height: 42px; width: auto; display: block;" />
                         </a>
                     </div>
                 </div>

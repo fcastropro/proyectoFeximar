@@ -7,15 +7,26 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BoxType extends Model
 {
-    //
     protected $fillable = [
         'code',
         'name',
         'active',
     ];
 
-    public function presentations(): HasMany
+    protected function casts(): array
     {
-        return $this->hasMany(FarmProductPresentation::class);
+        return [
+            'active' => 'boolean',
+        ];
+    }
+
+    public function orderDetails(): HasMany
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
+    public function presentationConfigs(): HasMany
+    {
+        return $this->hasMany(PresentationBoxConfig::class);
     }
 }

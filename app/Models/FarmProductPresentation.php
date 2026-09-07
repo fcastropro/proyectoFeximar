@@ -8,33 +8,36 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FarmProductPresentation extends Model
 {
-    //
     protected $fillable = [
         'farm_product_id',
-        'box_type_id',
         'stem_length_cm',
         'stems_per_bunch',
-        'bunches_per_box',
-        'stems_per_box',
-        'available_boxes',
         'price_per_stem',
         'price_per_bunch',
-        'price_per_box',
         'active',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+            'price_per_stem' => 'decimal:4',
+            'price_per_bunch' => 'decimal:2',
+        ];
+    }
 
     public function farmProduct(): BelongsTo
     {
         return $this->belongsTo(FarmProduct::class);
     }
 
-    public function boxType(): BelongsTo
+    public function availabilities(): HasMany
     {
-        return $this->belongsTo(BoxType::class);
+        return $this->hasMany(FarmProductAvailability::class);
     }
 
-    public function orderDetails(): HasMany
+    public function boxConfigs(): HasMany
     {
-        return $this->hasMany(OrderDetail::class);
+        return $this->hasMany(PresentationBoxConfig::class);
     }
 }

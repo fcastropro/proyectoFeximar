@@ -1103,21 +1103,6 @@
                     <div class="connect-us">
                         <ul class="social-btn">
                             <li>
-                                <a itemprop="url" href="https://facebook.com" target="_blank" title="Facebook">
-                                    <i class="fa fa-facebook"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a itemprop="url" href="https://instagram.com" target="_blank" title="Instagram">
-                                    <i class="fa fa-instagram"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a itemprop="url" href="https://linkedin.com" target="_blank" title="LinkedIn">
-                                    <i class="fa fa-linkedin"></i>
-                                </a>
-                            </li>
-                            <li>
                                 <a itemprop="url" href="https://wa.me/593999999999" target="_blank" title="WhatsApp Direct Sales">
                                     <i class="fa fa-whatsapp"></i>
                                 </a>
@@ -1158,13 +1143,13 @@
                     <ul>
                         <li>
                             <img src="{{ asset('home/images/resource/phone.png') }}" alt="Teléfono Exportaciones" />
-                            <span>+593 (2) 299-8800</span>
+                            <span>+593 (2) 999676644</span>
                             <p>Ventas Internacionales</p>
                         </li>
 
                         <li>
                             <img src="{{ asset('home/images/resource/sms.png') }}" alt="Email Ventas" />
-                            <span>sales@xtremeflowers.com</span>
+                            <span>feximaruioec@gmail.com</span>
                             <p>Departamento de Exportación</p>
                         </li>
 

@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,11 +30,26 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        try {
+            $request->authenticate();
+        } catch (ValidationException $exception) {
+            // Mantener el flujo visual del Home cuando el login viene del modal público.
+            if ($request->input('login_source') === 'home') {
+                throw ValidationException::withMessages($exception->errors())
+                    ->redirectTo(url('/'));
+            }
+
+            throw $exception;
+        }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Temporal sin roles: ir siempre al panel admin.
+        // Se limpia url.intended para evitar que una visita previa a /dashboard
+        // de Breeze gane sobre el fallback de intended().
+        $request->session()->forget('url.intended');
+
+        return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
     /**

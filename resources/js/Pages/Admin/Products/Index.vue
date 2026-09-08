@@ -54,6 +54,7 @@ const destroy = (product) => {
                                 <thead>
                                     <tr>
                                         <th><strong>ID</strong></th>
+                                        <th><strong>Imagen</strong></th>
                                         <th><strong>Nombre</strong></th>
                                         <th><strong>Tipo de flor</strong></th>
                                         <th><strong>Variedad</strong></th>
@@ -64,12 +65,23 @@ const destroy = (product) => {
                                 </thead>
                                 <tbody>
                                     <tr v-if="products.length === 0">
-                                        <td colspan="7" class="text-center text-muted">
+                                        <td colspan="8" class="text-center text-muted">
                                             No hay productos registrados.
                                         </td>
                                     </tr>
                                     <tr v-for="product in products" :key="product.id">
                                         <td>{{ product.id }}</td>
+                                        <td>
+                                            <img
+                                                v-if="product.image_url"
+                                                :src="product.image_url"
+                                                :alt="product.name"
+                                                class="product-list-thumb rounded"
+                                            >
+                                            <div v-else class="product-list-placeholder rounded">
+                                                <i class="fa fa-leaf"></i>
+                                            </div>
+                                        </td>
                                         <td>{{ product.name }}</td>
                                         <td>{{ product.flower_type || '—' }}</td>
                                         <td>{{ product.variety_name || '—' }}</td>
@@ -115,3 +127,23 @@ const destroy = (product) => {
         </div>
     </AdminLayout>
 </template>
+
+<style scoped>
+.product-list-thumb {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    display: block;
+}
+
+.product-list-placeholder {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #1a1a22 0%, #2a2a35 55%, #1e1e28 100%);
+    color: rgba(215, 25, 75, 0.85);
+    font-size: 1rem;
+}
+</style>

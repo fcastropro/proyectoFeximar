@@ -50,6 +50,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if ($user && ! $user->accountIsActive()) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Esta cuenta está desactivada. Contacta al administrador FEXIMAR.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

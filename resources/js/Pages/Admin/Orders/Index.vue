@@ -1,12 +1,16 @@
 <script setup>
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { computed, reactive } from 'vue'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 
 const props = defineProps({
     orders: {
-        type: Array,
-        default: () => [],
+        type: Object,
+        required: true,
+    },
+    filters: {
+        type: Object,
+        default: () => ({}),
     },
     statusLabels: {
         type: Object,
@@ -16,8 +20,21 @@ const props = defineProps({
 
 const page = usePage()
 const successMessage = computed(() => page.props.flash?.success ?? null)
+const rows = computed(() => props.orders.data ?? [])
+
+const form = reactive({
+    q: props.filters.q ?? '',
+    status: props.filters.status ?? '',
+})
 
 const statusLabel = (status) => props.statusLabels[status] ?? status
+
+const apply = () => {
+    const query = {}
+    if (form.q) query.q = form.q
+    if (form.status) query.status = form.status
+    router.get(route('admin.orders.index'), query, { preserveState: true, replace: true })
+}
 
 const destroy = (order) => {
     if (confirm(`¿Seguro que deseas eliminar el pedido #${order.id}?`)) {
@@ -37,7 +54,8 @@ const destroy = (order) => {
                     <span>Pedidos de compradores internacionales</span>
                 </div>
             </div>
-            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex gap-2">
+                <a :href="route('admin.exports.orders')" class="btn btn-outline-primary">CSV</a>
                 <Link :href="route('admin.orders.create')" class="btn btn-primary">
                     Nuevo pedido
                 </Link>
@@ -46,6 +64,25 @@ const destroy = (order) => {
 
         <div v-if="successMessage" class="alert alert-success alert-dismissible fade show">
             {{ successMessage }}
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <form class="row" @submit.prevent="apply">
+                    <div class="col-md-4 mb-2">
+                        <input v-model="form.q" class="form-control" placeholder="Buscar ID o comprador">
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <select v-model="form.status" class="form-control">
+                            <option value="">Todos los estados</option>
+                            <option v-for="(label, key) in statusLabels" :key="key" :value="key">{{ label }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <button class="btn btn-primary" type="submit">Filtrar</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <div class="row">
@@ -68,12 +105,12 @@ const destroy = (order) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-if="orders.length === 0">
+                                    <tr v-if="rows.length === 0">
                                         <td colspan="6" class="text-center text-muted">
                                             No hay pedidos registrados.
                                         </td>
                                     </tr>
-                                    <tr v-for="order in orders" :key="order.id">
+                                    <tr v-for="order in rows" :key="order.id">
                                         <td>{{ order.id }}</td>
                                         <td>{{ order.buyer_name || '—' }}</td>
                                         <td>{{ order.created_at || '—' }}</td>
@@ -91,6 +128,12 @@ const destroy = (order) => {
                                                 >
                                                     Ver
                                                 </Link>
+                                                <a
+                                                    :href="route('admin.reports.orders.pdf', order.id)"
+                                                    class="btn btn-secondary shadow btn-xs"
+                                                >
+                                                    PDF
+                                                </a>
                                                 <Link
                                                     :href="route('admin.orders.edit', order.id)"
                                                     class="btn btn-success shadow btn-xs"

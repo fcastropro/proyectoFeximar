@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Buyer extends Model
@@ -19,12 +20,16 @@ class Buyer extends Model
         'city',
         'address',
         'active',
+        'credit_allowed',
+        'credit_days_default',
     ];
 
     protected function casts(): array
     {
         return [
             'active' => 'boolean',
+            'credit_allowed' => 'boolean',
+            'credit_days_default' => 'integer',
         ];
     }
 
@@ -41,5 +46,22 @@ class Buyer extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function buyerUsers(): HasMany
+    {
+        return $this->hasMany(BuyerUser::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'buyer_users')
+            ->withPivot(['id', 'role', 'active'])
+            ->withTimestamps();
+    }
+
+    public function carts(): HasMany
+    {
+        return $this->hasMany(BuyerCart::class);
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Variety;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -29,6 +30,7 @@ class ProductController extends Controller
                 'category',
                 'variety',
                 'color',
+                'image_path',
                 'active',
             ])
             ->map(function (Product $product) {
@@ -44,6 +46,7 @@ class ProductController extends Controller
                         ?? ($attributes['variety'] ?? null),
                     'color' => $relatedVariety?->color
                         ?? ($attributes['color'] ?? null),
+                    'image_url' => $product->imageUrl(),
                     'active' => $product->active,
                 ];
             });
@@ -62,7 +65,13 @@ class ProductController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        Product::create($this->validatedData($request));
+        $data = $this->validatedData($request);
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        Product::create($data);
 
         return redirect()
             ->route('admin.products.index')
@@ -86,6 +95,7 @@ class ProductController extends Controller
                 'variety_id' => $product->variety_id,
                 'color' => ($product->getAttributes()['color'] ?? null) ?: $relatedVariety?->color,
                 'description' => $product->description,
+                'image_url' => $product->imageUrl(),
                 'active' => $product->active,
             ],
             'flowerTypes' => $this->activeFlowerTypes(),
@@ -97,7 +107,18 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product): RedirectResponse
     {
-        $product->update($this->validatedData($request));
+        $data = $this->validatedData($request);
+        $previousPath = $product->image_path;
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        $product->update($data);
+
+        if ($request->hasFile('image') && $previousPath && $previousPath !== $product->image_path) {
+            Storage::disk('public')->delete($previousPath);
+        }
 
         return redirect()
             ->route('admin.products.index')
@@ -106,7 +127,12 @@ class ProductController extends Controller
 
     public function destroy(Product $product): RedirectResponse
     {
+        $path = $product->image_path;
         $product->delete();
+
+        if ($path) {
+            Storage::disk('public')->delete($path);
+        }
 
         return redirect()
             ->route('admin.products.index')
@@ -131,6 +157,7 @@ class ProductController extends Controller
             'color' => ['nullable', 'string', 'max:100'],
             'description' => ['nullable', 'string'],
             'active' => ['boolean'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
         ]);
 
         $variety = Variety::query()
@@ -140,7 +167,6 @@ class ProductController extends Controller
         return [
             'name' => $validated['name'],
             'variety_id' => $variety->id,
-            // Dual-write temporal mientras se mantienen columnas texto.
             'category' => $variety->flowerType?->name,
             'variety' => $variety->name,
             'color' => $validated['color'] ?: $variety->color,
@@ -149,9 +175,6 @@ class ProductController extends Controller
         ];
     }
 
-    /**
-     * @return \Illuminate\Support\Collection<int, array{id:int,name:string}>
-     */
     private function activeFlowerTypes()
     {
         return FlowerType::query()
@@ -160,9 +183,6 @@ class ProductController extends Controller
             ->get(['id', 'name']);
     }
 
-    /**
-     * @return \Illuminate\Support\Collection<int, array{id:int,name:string,color:?string,flower_type_id:int}>
-     */
     private function varietiesForFlowerType(int $flowerTypeId)
     {
         return Variety::query()

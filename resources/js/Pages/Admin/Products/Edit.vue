@@ -22,6 +22,7 @@ const varieties = ref([...props.initialVarieties])
 const loadingVarieties = ref(false)
 const skipFlowerTypeWatch = ref(true)
 const skipVarietyWatch = ref(true)
+const imagePreview = ref(null)
 
 const form = useForm({
     name: props.product.name ?? '',
@@ -30,7 +31,20 @@ const form = useForm({
     color: props.product.color ?? '',
     description: props.product.description ?? '',
     active: Boolean(props.product.active),
+    image: null,
 })
+
+const onImageChange = (event) => {
+    const file = event.target.files?.[0] ?? null
+    form.image = file
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value)
+        imagePreview.value = null
+    }
+    if (file) {
+        imagePreview.value = URL.createObjectURL(file)
+    }
+}
 
 const fetchVarieties = async (flowerTypeId) => {
     if (!flowerTypeId) {
@@ -86,7 +100,12 @@ watch(
 )
 
 const submit = () => {
-    form.put(route('admin.products.update', props.product.id))
+    form.transform((data) => ({
+        ...data,
+        _method: 'put',
+    })).post(route('admin.products.update', props.product.id), {
+        forceFormData: true,
+    })
 }
 </script>
 
@@ -197,6 +216,31 @@ const submit = () => {
                                     </div>
                                 </div>
 
+                                <div class="mb-3 col-md-6">
+                                    <label class="form-label">Imagen</label>
+                                    <input
+                                        type="file"
+                                        class="form-control"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        :class="{ 'is-invalid': form.errors.image }"
+                                        @change="onImageChange"
+                                    >
+                                    <div v-if="form.errors.image" class="invalid-feedback d-block">
+                                        {{ form.errors.image }}
+                                    </div>
+                                    <div class="mt-3 product-image-preview-wrap">
+                                        <img
+                                            v-if="imagePreview || product.image_url"
+                                            :src="imagePreview || product.image_url"
+                                            alt="Imagen del producto"
+                                            class="product-image-thumb"
+                                        >
+                                        <div v-else class="product-image-placeholder">
+                                            <i class="fa fa-leaf"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="mb-3 col-md-12">
                                     <div class="form-check">
                                         <input
@@ -235,3 +279,30 @@ const submit = () => {
         </div>
     </AdminLayout>
 </template>
+
+<style scoped>
+.product-image-preview-wrap {
+    width: 140px;
+    height: 140px;
+    overflow: hidden;
+    border-radius: 0.75rem;
+}
+
+.product-image-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.product-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #1a1a22 0%, #2a2a35 55%, #1e1e28 100%);
+    color: rgba(215, 25, 75, 0.85);
+    font-size: 2rem;
+}
+</style>

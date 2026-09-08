@@ -31,7 +31,9 @@ const destroy = (farm) => {
                     <span>Gestión de fincas productoras</span>
                 </div>
             </div>
-            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex gap-2 flex-wrap">
+                <a :href="route('admin.reports.farms.pdf')" class="btn btn-outline-success">PDF</a>
+                <a :href="route('admin.exports.farms')" class="btn btn-outline-primary">CSV</a>
                 <Link :href="route('admin.farms.create')" class="btn btn-primary">
                     Nueva Finca
                 </Link>
@@ -92,6 +94,12 @@ const destroy = (farm) => {
                                         </td>
                                         <td class="admin-actions-column">
                                             <div class="admin-actions">
+                                                <a
+                                                    :href="route('admin.reports.farms.show-pdf', farm.id)"
+                                                    class="btn btn-info shadow btn-xs"
+                                                >
+                                                    PDF
+                                                </a>
                                                 <Link
                                                     :href="route('admin.farms.edit', farm.id)"
                                                     class="btn btn-success shadow btn-xs"

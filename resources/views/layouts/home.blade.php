@@ -1084,6 +1084,94 @@
         #topcontrol:hover {
             transform: translateY(-6px) scale(1.08);
         }
+
+        /* Home session bar (auth) */
+        .home-session-block {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: 14px;
+            padding-left: 14px;
+            border-left: 1px solid rgba(255, 255, 255, 0.12);
+            vertical-align: middle;
+            text-align: left;
+            max-width: 340px;
+        }
+        .home-session-meta {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.25;
+            min-width: 0;
+        }
+        .home-session-org {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+        .home-session-user {
+            font-size: 11px;
+            font-weight: 600;
+            color: #d1d1d6;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+        .home-session-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .home-session-actions .theme-btn,
+        .home-session-actions button.theme-btn {
+            display: inline-block;
+            padding: 6px 12px !important;
+            font-size: 10px !important;
+            letter-spacing: 0.6px;
+            margin: 0;
+            line-height: 1.2;
+            cursor: pointer;
+            text-decoration: none !important;
+        }
+        .home-session-actions form {
+            display: inline;
+            margin: 0;
+        }
+        .home-session-actions .theme-btn.dark {
+            background: transparent !important;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff !important;
+            box-shadow: none;
+        }
+        .home-session-actions .theme-btn.dark:hover {
+            background: var(--rose-crimson) !important;
+            border-color: var(--rose-crimson);
+        }
+        .home-session-quick {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .home-session-quick .home-session-block {
+            border-left: none;
+            margin-left: 0;
+            padding-left: 0;
+            max-width: none;
+        }
+        .home-session-quick .home-session-org {
+            max-width: 200px;
+            color: #ffffff;
+        }
+        .home-session-quick .home-session-user {
+            max-width: 200px;
+        }
     </style>
 </head>
 <body itemscope="">
@@ -1154,9 +1242,39 @@
                         </li>
 
                         <li>
-                            <a href="#digital-poster" class="theme-btn popup1">
-                                <i class="fa fa-book"></i> Catálogo 2026
-                            </a>
+                            @guest
+                                <a href="#" class="theme-btn popup1" title="Iniciar sesión">
+                                    <i class="fa fa-lock"></i> INICIAR SESIÓN
+                                </a>
+                            @else
+                                @php
+                                    $qcUser = auth()->user();
+                                    $qcIsBuyer = $qcUser->isBuyerUser();
+                                    $qcIsFarm = $qcUser->isFarmUser();
+                                    $qcOrg = $qcIsBuyer
+                                        ? ($qcUser->primaryBuyer()?->company_name ?? 'Mi empresa')
+                                        : ($qcIsFarm
+                                            ? ($qcUser->primaryFarm()?->name ?? 'Mi finca')
+                                            : 'FEXIMAR');
+                                    $qcPanelUrl = $qcUser->portalDashboardUrl();
+                                    $qcPanelLabel = $qcIsBuyer
+                                        ? 'MI PANEL'
+                                        : ($qcIsFarm ? 'MI PANEL' : 'PANEL ADMIN');
+                                @endphp
+                                <div class="home-session-block home-session-quick">
+                                    <div class="home-session-meta">
+                                        <span class="home-session-org">{{ $qcOrg }}</span>
+                                        <span class="home-session-user">{{ $qcUser->name }}</span>
+                                    </div>
+                                    <div class="home-session-actions">
+                                        <a href="{{ $qcPanelUrl }}" class="theme-btn" title="Ir al panel">{{ $qcPanelLabel }}</a>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="theme-btn dark" title="Cerrar sesión">SALIR</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endguest
                         </li>
                     </ul>
                 </div>
@@ -1256,6 +1374,25 @@
                     <ul class="responsive-popup-btns">
                         <li><i class="fa fa-book"></i><a itemprop="url" href="#digital-poster">Catálogo Digital</a></li>
                         <li><i class="fa fa-envelope"></i><a itemprop="url" href="#contacto">Solicitar Cotización</a></li>
+                        @auth
+                            <li>
+                                <i class="fa fa-user"></i>
+                                <a itemprop="url" href="{{ auth()->user()->portalDashboardUrl() }}">
+                                    {{ auth()->user()->isBuyerUser() || auth()->user()->isFarmUser() ? 'Mi panel' : 'Panel admin' }}
+                                </a>
+                            </li>
+                            <li>
+                                <i class="fa fa-sign-out"></i>
+                                <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                                    @csrf
+                                    <button type="submit" style="background:none;border:none;color:inherit;padding:0;font:inherit;cursor:pointer;">
+                                        Cerrar sesión
+                                    </button>
+                                </form>
+                            </li>
+                        @else
+                            <li><i class="fa fa-lock"></i><a href="#" class="popup1">INICIAR SESIÓN</a></li>
+                        @endauth
                     </ul>
                     <ul>
                         <li><a itemprop="url" href="{{ url('/') }}">INICIO</a></li>
@@ -1972,7 +2109,8 @@
 
 </div>
 
-<!-- Modal de Registro / Acceso -->
+<!-- Modal de Registro / Acceso (solo invitados) -->
+@guest
 <div id="signup-popup">
     <div class="region2" id="signup">
         <div class="modal-dialog1">
@@ -2038,6 +2176,7 @@
         </div>
     </div>
 </div>
+@endguest
 
 <!-- Scripts existentes -->
 <script type="text/javascript" src="{{ asset('home/js/modernizr-2.0.6.js') }}"></script>
@@ -2117,6 +2256,7 @@
     });
 </script>
 
+@guest
 @if ($errors->has('email') || $errors->has('password'))
 <script>
     $(document).ready(function () {
@@ -2124,5 +2264,6 @@
     });
 </script>
 @endif
+@endguest
 </body>
 </html>

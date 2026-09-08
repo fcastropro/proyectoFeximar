@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -16,6 +17,7 @@ class Product extends Model
         'color',
         'description',
         'image',
+        'image_path',
         'active',
     ];
 
@@ -34,5 +36,14 @@ class Product extends Model
     public function farmProducts(): HasMany
     {
         return $this->hasMany(FarmProduct::class);
+    }
+
+    public function imageUrl(): ?string
+    {
+        if (! $this->image_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->image_path);
     }
 }

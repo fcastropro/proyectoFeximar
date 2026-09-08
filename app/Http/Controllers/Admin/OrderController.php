@@ -8,6 +8,8 @@ use App\Models\FarmProductAvailability;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\PresentationBoxConfig;
+use App\Services\Admin\ActivityLogger;
+use App\Services\OrderFulfillmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,13 +21,32 @@ use Inertia\Response;
 
 class OrderController extends Controller
 {
-    public function index(): Response
+    public function __construct(
+        private readonly OrderFulfillmentService $fulfillmentService,
+        private readonly ActivityLogger $activityLogger,
+    ) {}
+
+    public function index(Request $request): Response
     {
-        $orders = Order::query()
+        $query = Order::query()
             ->with('buyer:id,company_name')
-            ->orderByDesc('id')
-            ->get(['id', 'buyer_id', 'status', 'total', 'created_at'])
-            ->map(fn (Order $order) => [
+            ->orderByDesc('id');
+
+        if ($request->filled('q')) {
+            $q = $request->string('q')->toString();
+            $query->where(function ($builder) use ($q) {
+                $builder->where('id', $q)
+                    ->orWhereHas('buyer', fn ($b) => $b->where('company_name', 'like', "%{$q}%"));
+            });
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->string('status')->toString());
+        }
+
+        $orders = $query
+            ->paginate(20)
+            ->withQueryString()
+            ->through(fn (Order $order) => [
                 'id' => $order->id,
                 'buyer_name' => $order->buyer?->company_name,
                 'status' => $order->status,
@@ -35,6 +56,10 @@ class OrderController extends Controller
 
         return Inertia::render('Admin/Orders/Index', [
             'orders' => $orders,
+            'filters' => [
+                'q' => $request->input('q'),
+                'status' => $request->input('status'),
+            ],
             'statusLabels' => $this->statusLabels(),
         ]);
     }
@@ -52,7 +77,8 @@ class OrderController extends Controller
     {
         $payload = $this->validatedPayload($request);
 
-        DB::transaction(function () use ($payload) {
+        $order = null;
+        DB::transaction(function () use ($payload, &$order) {
             $order = Order::create([
                 'buyer_id' => $payload['buyer_id'],
                 'status' => $payload['status'],
@@ -63,7 +89,18 @@ class OrderController extends Controller
             foreach ($payload['details'] as $detail) {
                 $order->details()->create($detail);
             }
+
+            $this->fulfillmentService->syncForOrder($order->fresh('details'));
         });
+
+        if ($order) {
+            $this->activityLogger->log(
+                'order_created',
+                "Pedido #{$order->id} creado desde admin",
+                Order::class,
+                $order->id,
+            );
+        }
 
         return redirect()
             ->route('admin.orders.index')
@@ -73,16 +110,23 @@ class OrderController extends Controller
     public function show(Order $order): Response
     {
         $order->load([
-            'buyer:id,company_name,contact_name,email',
+            'buyer:id,company_name,contact_name,email,credit_allowed,credit_days_default',
+            'cargoAgency:id,name',
+            'destinationCountry:id,name',
             'details.boxType:id,code,name',
             'details.availability:id,farm_product_presentation_id,year,week_number,available_stems',
-            'details.availability.presentation:id,farm_product_id,stem_length_cm',
+            'details.availability.presentation:id,farm_product_id,stem_length_cm,stems_per_bunch',
             'details.availability.presentation.farmProduct:id,farm_id,product_id',
             'details.availability.presentation.farmProduct.farm:id,name',
             'details.availability.presentation.farmProduct.product:id,name,variety_id,category,variety,color',
             'details.availability.presentation.farmProduct.product.variety:id,flower_type_id,name,color',
             'details.availability.presentation.farmProduct.product.variety.flowerType:id,name',
+            'farmFulfillments.farm:id,name',
+            'farmFinances.payments',
+            'farmFinances.farm:id,name',
         ]);
+
+        $financePaid = $order->farmFinances->sum(fn ($f) => $f->paidAmount());
 
         return Inertia::render('Admin/Orders/Show', [
             'order' => [
@@ -94,6 +138,49 @@ class OrderController extends Controller
                 'notes' => $order->notes,
                 'total' => $order->total,
                 'created_at' => $order->created_at?->format('Y-m-d H:i'),
+                'payment_condition' => $order->payment_condition,
+                'credit_days' => $order->credit_days,
+                'shipping' => [
+                    'cargo_agency' => $order->cargoAgency?->name,
+                    'shipping_method' => $order->shipping_method,
+                    'destination_country' => $order->destinationCountry?->name,
+                    'destination_city' => $order->destination_city,
+                    'destination_airport' => $order->destination_airport,
+                    'destination_port' => $order->destination_port,
+                    'marking' => $order->marking,
+                ],
+                'finance' => [
+                    'farm_total' => round((float) $order->farmFinances->sum('amount'), 2),
+                    'farm_paid' => round((float) $financePaid, 2),
+                    'farm_balance' => round(max(0, (float) $order->farmFinances->sum('amount') - (float) $financePaid), 2),
+                    'lines' => $order->farmFinances->map(fn ($f) => [
+                        'farm_name' => $f->farm?->name,
+                        'amount' => $f->amount,
+                        'payment_condition' => $f->payment_condition,
+                        'due_date' => $f->due_date?->format('Y-m-d'),
+                        'status' => $f->status,
+                        'paid' => $f->paidAmount(),
+                        'balance' => $f->balance(),
+                        'payments' => $f->payments->map(fn ($p) => [
+                            'amount' => $p->amount,
+                            'payment_date' => $p->payment_date?->format('Y-m-d') ?? $p->payment_date,
+                            'reference' => $p->reference,
+                        ]),
+                    ]),
+                ],
+                'fulfillments' => $order->farmFulfillments->map(fn ($f) => [
+                    'id' => $f->id,
+                    'farm_name' => $f->farm?->name,
+                    'status' => $f->status,
+                    'received_at' => $f->received_at?->format('Y-m-d H:i'),
+                    'accepted_at' => $f->accepted_at?->format('Y-m-d H:i'),
+                    'rejected_at' => $f->rejected_at?->format('Y-m-d H:i'),
+                    'rejection_reason' => $f->rejection_reason,
+                    'prepared_at' => $f->prepared_at?->format('Y-m-d H:i'),
+                    'ready_at' => $f->ready_at?->format('Y-m-d H:i'),
+                    'dispatched_at' => $f->dispatched_at?->format('Y-m-d H:i'),
+                    'completed_at' => $f->completed_at?->format('Y-m-d H:i'),
+                ]),
                 'details' => $order->details->map(function (OrderDetail $detail) {
                     $meta = $this->availabilityMeta($detail->availability);
 
@@ -104,10 +191,13 @@ class OrderController extends Controller
                         'product_name' => $meta['product_name'],
                         'variety_name' => $meta['variety_name'],
                         'stem_length_cm' => $meta['stem_length_cm'],
+                        'bunches' => $detail->bunches,
+                        'stems_per_bunch' => $detail->stems_per_bunch,
                         'box_type' => $detail->boxType?->code ?? $detail->boxType?->name,
                         'quantity' => $detail->boxes,
                         'stems_per_box' => $detail->stems_per_box,
                         'total_stems' => $detail->total_stems,
+                        'price_per_stem' => $detail->price_per_stem,
                         'unit_price' => $detail->unit_price,
                         'subtotal' => $detail->subtotal,
                     ];
@@ -159,6 +249,8 @@ class OrderController extends Controller
             foreach ($payload['details'] as $detail) {
                 $order->details()->create($detail);
             }
+
+            $this->fulfillmentService->syncForOrder($order->fresh('details'));
         });
 
         return redirect()
@@ -238,7 +330,7 @@ class OrderController extends Controller
                     'presentation.farmProduct.product.variety:id,name',
                 ])
                 ->whereIn('id', $availabilityIds)
-                ->get(['id', 'farm_product_presentation_id', 'available_stems', 'year', 'week_number'])
+                ->get(['id', 'farm_product_presentation_id', 'available_stems', 'reserved_stems', 'year', 'week_number'])
                 ->keyBy('id');
 
             $presentationIds = $availabilities
@@ -300,9 +392,9 @@ class OrderController extends Controller
 
             foreach ($stemsByAvailability as $availabilityId => $requestedStems) {
                 $availability = $availabilities->get($availabilityId);
-                $availableStems = (int) ($availability?->available_stems ?? 0);
 
-                if ($requestedStems > $availableStems) {
+                // Disponibilidad restante (available - reserved) para validar pedidos.
+                if ($availability && $requestedStems > $availability->remainingStems()) {
                     $index = $firstIndexByAvailability[$availabilityId];
                     $label = $this->availabilityProductLabel($availability);
 

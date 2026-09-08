@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             FlowerTypeSeeder::class,
             VarietySeeder::class,
             BoxTypeSeeder::class,
+            FarmPortalDemoSeeder::class,
         ]);
     }
 }

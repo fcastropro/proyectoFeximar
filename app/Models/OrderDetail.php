@@ -11,9 +11,12 @@ class OrderDetail extends Model
         'order_id',
         'farm_product_availability_id',
         'box_type_id',
+        'bunches',
+        'stems_per_bunch',
         'boxes',
         'stems_per_box',
         'total_stems',
+        'price_per_stem',
         'unit_price',
         'subtotal',
     ];
@@ -21,9 +24,12 @@ class OrderDetail extends Model
     protected function casts(): array
     {
         return [
+            'bunches' => 'integer',
+            'stems_per_bunch' => 'integer',
             'boxes' => 'integer',
             'stems_per_box' => 'integer',
             'total_stems' => 'integer',
+            'price_per_stem' => 'decimal:4',
             'unit_price' => 'decimal:4',
             'subtotal' => 'decimal:2',
         ];

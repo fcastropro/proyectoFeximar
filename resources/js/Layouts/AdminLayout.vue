@@ -6,6 +6,29 @@ import AdminSidebar from '@/Components/Admin/AdminSidebar.vue'
 import AdminFooter from '@/Components/Admin/AdminFooter.vue'
 import { initializeAdminTheme } from '@/admin/initializeAdminTheme'
 
+defineProps({
+    brandHref: {
+        type: String,
+        default: '/admin',
+    },
+    headerTitle: {
+        type: String,
+        default: 'Administración FEXIMAR',
+    },
+    headerSubtitle: {
+        type: String,
+        default: 'FEXIMAR',
+    },
+    farmMode: {
+        type: Boolean,
+        default: false,
+    },
+    buyerMode: {
+        type: Boolean,
+        default: false,
+    },
+})
+
 let removeInertiaListener = null
 
 onMounted(() => {
@@ -29,7 +52,7 @@ onUnmounted(() => {
 <template>
     <div id="main-wrapper" class="show feximar-admin">
         <div class="nav-header">
-            <a href="/admin" class="brand-logo">
+            <a :href="brandHref" class="brand-logo">
                 <span class="feximar-brand">
                     FEXIMAR
                 </span>
@@ -44,8 +67,16 @@ onUnmounted(() => {
             </div>
         </div>
 
-        <AdminHeader />
-        <AdminSidebar />
+        <AdminHeader
+            :title="headerTitle"
+            :subtitle="headerSubtitle"
+            :farm-mode="farmMode"
+            :buyer-mode="buyerMode"
+        />
+
+        <slot name="sidebar">
+            <AdminSidebar />
+        </slot>
 
         <div class="content-body">
             <div class="container-fluid">

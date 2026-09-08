@@ -13,6 +13,7 @@ class FarmProductAvailability extends Model
         'year',
         'week_number',
         'available_stems',
+        'reserved_stems',
         'price_per_stem',
         'price_per_bunch',
         'active',
@@ -22,9 +23,16 @@ class FarmProductAvailability extends Model
     {
         return [
             'active' => 'boolean',
+            'available_stems' => 'integer',
+            'reserved_stems' => 'integer',
             'price_per_stem' => 'decimal:4',
             'price_per_bunch' => 'decimal:2',
         ];
+    }
+
+    public function remainingStems(): int
+    {
+        return max(0, (int) $this->available_stems - (int) $this->reserved_stems);
     }
 
     public function presentation(): BelongsTo

@@ -44,12 +44,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Temporal sin roles: ir siempre al panel admin.
-        // Se limpia url.intended para evitar que una visita previa a /dashboard
-        // de Breeze gane sobre el fallback de intended().
         $request->session()->forget('url.intended');
 
-        return redirect()->intended(route('admin.dashboard', absolute: false));
+        $user = $request->user();
+
+        return redirect()->to($user->portalDashboardUrl());
     }
 
     /**

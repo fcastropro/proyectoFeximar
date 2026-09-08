@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Farm extends Model
@@ -48,5 +49,27 @@ class Farm extends Model
     public function farmProducts(): HasMany
     {
         return $this->hasMany(FarmProduct::class);
+    }
+
+    public function farmUsers(): HasMany
+    {
+        return $this->hasMany(FarmUser::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'farm_users')
+            ->withPivot(['id', 'role', 'active'])
+            ->withTimestamps();
+    }
+
+    public function fulfillments(): HasMany
+    {
+        return $this->hasMany(OrderFarmFulfillment::class);
+    }
+
+    public function orderFinances(): HasMany
+    {
+        return $this->hasMany(FarmOrderFinance::class);
     }
 }

@@ -2265,5 +2265,9 @@
 </script>
 @endif
 @endguest
+
+<!-- Widget IA Asesor de Rosas -->
+@include('partials.chat-widget')
+
 </body>
 </html>

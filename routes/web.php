@@ -32,6 +32,7 @@ use App\Http\Controllers\Farm\OrderController as FarmOrderController;
 use App\Http\Controllers\Farm\PaymentController as FarmPaymentController;
 use App\Http\Controllers\Farm\ProductController as FarmProductPortalController;
 use App\Http\Controllers\Farm\ProfileController as FarmProfileController;
+use App\Http\Controllers\AIAdvisorController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,6 +40,10 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return view('index');
 });
+
+Route::post('/ai/advisor/query', [AIAdvisorController::class, 'query'])
+    ->middleware('throttle:60,1')
+    ->name('ai.advisor.query');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

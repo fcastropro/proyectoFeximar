@@ -21,8 +21,8 @@ class AvailabilityController extends BaseFarmController
                 'presentation:id,farm_product_id,stem_length_cm',
                 'presentation.farmProduct:id,farm_id,product_id',
                 'presentation.farmProduct.product:id,name,variety_id,variety,color,category',
-                'presentation.farmProduct.product.variety:id,name,color,flower_type_id',
-                'presentation.farmProduct.product.variety.flowerType:id,name',
+                'presentation.farmProduct.product.catalogVariety:id,name,color,flower_type_id',
+                'presentation.farmProduct.product.catalogVariety.flowerType:id,name',
             ])
             ->whereHas('presentation.farmProduct', fn ($q) => $q->where('farm_id', $farm->id))
             ->orderByDesc('year')
@@ -162,7 +162,7 @@ class AvailabilityController extends BaseFarmController
     {
         $presentation = $availability->presentation;
         $product = $presentation?->farmProduct?->product;
-        $variety = $product?->relationLoaded('variety') ? $product->getRelation('variety') : null;
+        $variety = $product?->relationLoaded('catalogVariety') ? $product->getRelation('catalogVariety') : null;
 
         return [
             'id' => $availability->id,
@@ -189,8 +189,8 @@ class AvailabilityController extends BaseFarmController
             ->with([
                 'farmProduct:id,farm_id,product_id',
                 'farmProduct.product:id,name,variety_id,variety,color,category',
-                'farmProduct.product.variety:id,name,color,flower_type_id',
-                'farmProduct.product.variety.flowerType:id,name',
+                'farmProduct.product.catalogVariety:id,name,color,flower_type_id',
+                'farmProduct.product.catalogVariety.flowerType:id,name',
             ])
             ->whereHas('farmProduct', fn ($q) => $q->where('farm_id', $farmId))
             ->where(function ($query) use ($includeId) {
@@ -203,7 +203,7 @@ class AvailabilityController extends BaseFarmController
             ->get()
             ->map(function (FarmProductPresentation $presentation) {
                 $product = $presentation->farmProduct?->product;
-                $variety = $product?->getRelation('variety');
+                $variety = $product?->getRelation('catalogVariety');
                 $flowerType = $variety?->flowerType?->name
                     ?? $product?->getAttributes()['category']
                     ?? 'Sin tipo';

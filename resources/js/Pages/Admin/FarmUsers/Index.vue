@@ -12,7 +12,7 @@ const successMessage = computed(() => page.props.flash?.success ?? null)
 
 const destroy = (item) => {
     if (confirm(`¿Eliminar asociación de ${item.user_email}?`)) {
-        router.delete(route('admin.farm-users.destroy', item.id))
+        router.delete(route('admin.users.farms.destroy', item.id))
     }
 }
 </script>
@@ -28,7 +28,7 @@ const destroy = (item) => {
                 </div>
             </div>
             <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                <Link :href="route('admin.farm-users.create')" class="btn btn-primary">Nuevo usuario finca</Link>
+                <Link :href="route('admin.users.farms.create')" class="btn btn-primary">Nuevo usuario finca</Link>
             </div>
         </div>
         <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
@@ -55,7 +55,7 @@ const destroy = (item) => {
                                 <td>{{ item.active ? 'Activo' : 'Inactivo' }}</td>
                                 <td class="admin-actions-column">
                                     <div class="admin-actions">
-                                        <Link :href="route('admin.farm-users.edit', item.id)" class="btn btn-success btn-xs">Editar</Link>
+                                        <Link :href="route('admin.users.farms.edit', item.id)" class="btn btn-success btn-xs">Editar</Link>
                                         <button type="button" class="btn btn-danger btn-xs" @click="destroy(item)">Eliminar</button>
                                     </div>
                                 </td>

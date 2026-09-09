@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Buyer;
 use App\Models\Country;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,6 +13,8 @@ use Inertia\Response;
 
 class BuyerController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function index(): Response
     {
         $buyers = Buyer::query()
@@ -90,11 +93,11 @@ class BuyerController extends Controller
 
     public function destroy(Buyer $buyer): RedirectResponse
     {
-        $buyer->delete();
-
-        return redirect()
-            ->route('admin.buyers.index')
-            ->with('success', 'Comprador eliminado correctamente.');
+        return $this->deleteOrFailFriendly(
+            fn () => $buyer->delete(),
+            'admin.buyers.index',
+            'Comprador eliminado correctamente.',
+        );
     }
 
     /**

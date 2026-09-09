@@ -10,6 +10,7 @@ use App\Models\OrderDetail;
 use App\Models\PresentationBoxConfig;
 use App\Services\Admin\ActivityLogger;
 use App\Services\OrderFulfillmentService;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,8 @@ use Inertia\Response;
 
 class OrderController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function __construct(
         private readonly OrderFulfillmentService $fulfillmentService,
         private readonly ActivityLogger $activityLogger,
@@ -119,8 +122,8 @@ class OrderController extends Controller
             'details.availability.presentation.farmProduct:id,farm_id,product_id',
             'details.availability.presentation.farmProduct.farm:id,name',
             'details.availability.presentation.farmProduct.product:id,name,variety_id,category,variety,color',
-            'details.availability.presentation.farmProduct.product.variety:id,flower_type_id,name,color',
-            'details.availability.presentation.farmProduct.product.variety.flowerType:id,name',
+            'details.availability.presentation.farmProduct.product.catalogVariety:id,flower_type_id,name,color',
+            'details.availability.presentation.farmProduct.product.catalogVariety.flowerType:id,name',
             'farmFulfillments.farm:id,name',
             'farmFinances.payments',
             'farmFinances.farm:id,name',
@@ -260,14 +263,16 @@ class OrderController extends Controller
 
     public function destroy(Order $order): RedirectResponse
     {
-        DB::transaction(function () use ($order) {
-            $order->details()->delete();
-            $order->delete();
-        });
-
-        return redirect()
-            ->route('admin.orders.index')
-            ->with('success', 'Pedido eliminado correctamente.');
+        return $this->deleteOrFailFriendly(
+            function () use ($order): void {
+                DB::transaction(function () use ($order) {
+                    $order->details()->delete();
+                    $order->delete();
+                });
+            },
+            'admin.orders.index',
+            'Pedido eliminado correctamente.',
+        );
     }
 
     /**
@@ -327,7 +332,7 @@ class OrderController extends Controller
                     'presentation:id,farm_product_id,stem_length_cm',
                     'presentation.farmProduct:id,product_id',
                     'presentation.farmProduct.product:id,name,variety_id,variety',
-                    'presentation.farmProduct.product.variety:id,name',
+                    'presentation.farmProduct.product.catalogVariety:id,name',
                 ])
                 ->whereIn('id', $availabilityIds)
                 ->get(['id', 'farm_product_presentation_id', 'available_stems', 'reserved_stems', 'year', 'week_number'])
@@ -453,8 +458,8 @@ class OrderController extends Controller
 
         $presentation = $availability->presentation;
         $product = $presentation?->farmProduct?->product;
-        $varietyName = $product?->relationLoaded('variety')
-            ? ($product->getRelation('variety')?->name)
+        $varietyName = $product?->relationLoaded('catalogVariety')
+            ? ($product->getRelation('catalogVariety')?->name)
             : null;
         $varietyName = $varietyName
             ?? $product?->getAttributes()['variety']
@@ -493,8 +498,8 @@ class OrderController extends Controller
                 'presentation.farmProduct:id,farm_id,product_id',
                 'presentation.farmProduct.farm:id,name',
                 'presentation.farmProduct.product:id,name,variety_id,category,variety,color',
-                'presentation.farmProduct.product.variety:id,flower_type_id,name,color',
-                'presentation.farmProduct.product.variety.flowerType:id,name',
+                'presentation.farmProduct.product.catalogVariety:id,flower_type_id,name,color',
+                'presentation.farmProduct.product.catalogVariety.flowerType:id,name',
                 'presentation.boxConfigs' => fn ($query) => $query
                     ->where('active', true)
                     ->with('boxType:id,code,name,active'),
@@ -563,8 +568,8 @@ class OrderController extends Controller
         $presentation = $availability?->presentation;
         $farmProduct = $presentation?->farmProduct;
         $product = $farmProduct?->product;
-        $relatedVariety = $product?->relationLoaded('variety')
-            ? $product->getRelation('variety')
+        $relatedVariety = $product?->relationLoaded('catalogVariety')
+            ? $product->getRelation('catalogVariety')
             : null;
 
         $year = $availability?->year;

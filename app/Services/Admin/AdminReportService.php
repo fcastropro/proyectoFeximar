@@ -46,7 +46,7 @@ class AdminReportService
             'details.boxType:id,code,name',
             'details.availability.presentation.farmProduct.farm:id,name',
             'details.availability.presentation.farmProduct.product:id,name,variety,variety_id',
-            'details.availability.presentation.farmProduct.product.variety:id,name',
+            'details.availability.presentation.farmProduct.product.catalogVariety:id,name',
             'details.availability.presentation:id,stem_length_cm,stems_per_bunch',
             'farmFulfillments.farm:id,name',
             'farmFinances.payments',
@@ -61,7 +61,7 @@ class AdminReportService
             $product = $farmProduct?->product;
             $varietyName = null;
             if ($product) {
-                $related = $product->relationLoaded('variety') ? $product->getRelation('variety') : null;
+                $related = $product->relationLoaded('catalogVariety') ? $product->getRelation('catalogVariety') : null;
                 $varietyName = $related?->name ?? ($product->getAttributes()['variety'] ?? null);
             }
 

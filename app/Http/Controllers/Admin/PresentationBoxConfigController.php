@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BoxType;
 use App\Models\FarmProductPresentation;
 use App\Models\PresentationBoxConfig;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class PresentationBoxConfigController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function index(): Response
     {
         $boxConfigs = PresentationBoxConfig::query()
@@ -23,8 +26,8 @@ class PresentationBoxConfigController extends Controller
                 'presentation.farmProduct:id,farm_id,product_id',
                 'presentation.farmProduct.farm:id,name',
                 'presentation.farmProduct.product:id,name,variety_id,category,variety,color',
-                'presentation.farmProduct.product.variety:id,flower_type_id,name,color',
-                'presentation.farmProduct.product.variety.flowerType:id,name',
+                'presentation.farmProduct.product.catalogVariety:id,flower_type_id,name,color',
+                'presentation.farmProduct.product.catalogVariety.flowerType:id,name',
             ])
             ->orderByDesc('id')
             ->get()
@@ -79,11 +82,11 @@ class PresentationBoxConfigController extends Controller
 
     public function destroy(PresentationBoxConfig $boxConfig): RedirectResponse
     {
-        $boxConfig->delete();
-
-        return redirect()
-            ->route('admin.box-configs.index')
-            ->with('success', 'Configuración de caja eliminada correctamente.');
+        return $this->deleteOrFailFriendly(
+            fn () => $boxConfig->delete(),
+            'admin.box-configs.index',
+            'Configuración de caja eliminada correctamente.',
+        );
     }
 
     /**
@@ -151,8 +154,8 @@ class PresentationBoxConfigController extends Controller
                 'farmProduct:id,farm_id,product_id',
                 'farmProduct.farm:id,name',
                 'farmProduct.product:id,name,variety_id,category,variety,color',
-                'farmProduct.product.variety:id,flower_type_id,name,color',
-                'farmProduct.product.variety.flowerType:id,name',
+                'farmProduct.product.catalogVariety:id,flower_type_id,name,color',
+                'farmProduct.product.catalogVariety.flowerType:id,name',
             ])
             ->where(function ($query) use ($includeId) {
                 $query->where('active', true);
@@ -188,8 +191,8 @@ class PresentationBoxConfigController extends Controller
     {
         $farmProduct = $presentation?->farmProduct;
         $product = $farmProduct?->product;
-        $relatedVariety = $product?->relationLoaded('variety')
-            ? $product->getRelation('variety')
+        $relatedVariety = $product?->relationLoaded('catalogVariety')
+            ? $product->getRelation('catalogVariety')
             : null;
 
         return [

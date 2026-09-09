@@ -63,7 +63,7 @@ class OrderController extends BaseFarmController
             $availability = $detail->availability;
             $presentation = $availability?->presentation;
             $product = $presentation?->farmProduct?->product;
-            $variety = $product?->relationLoaded('variety') ? $product->getRelation('variety') : null;
+            $variety = $product?->relationLoaded('catalogVariety') ? $product->getRelation('catalogVariety') : null;
 
             return [
                 'id' => $detail->id,
@@ -221,7 +221,7 @@ class OrderController extends BaseFarmController
                 'availability.presentation:id,farm_product_id,stem_length_cm',
                 'availability.presentation.farmProduct:id,farm_id,product_id',
                 'availability.presentation.farmProduct.product:id,name,variety_id,variety',
-                'availability.presentation.farmProduct.product.variety:id,name',
+                'availability.presentation.farmProduct.product.catalogVariety:id,name',
             ])
             ->where('order_id', $orderId)
             ->whereHas('availability.presentation.farmProduct', fn ($q) => $q->where('farm_id', $farmId))

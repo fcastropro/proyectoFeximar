@@ -16,7 +16,7 @@ const form = useForm({
     active: true,
 })
 
-const submit = () => form.post(route('admin.farm-users.store'))
+const submit = () => form.post(route('admin.users.farms.store'))
 </script>
 
 <template>
@@ -63,7 +63,7 @@ const submit = () => form.post(route('admin.farm-users.store'))
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary me-2" :disabled="form.processing">Guardar</button>
-                    <Link :href="route('admin.farm-users.index')" class="btn btn-light">Cancelar</Link>
+                    <Link :href="route('admin.users.farms.index')" class="btn btn-light">Cancelar</Link>
                 </form>
             </div>
         </div>

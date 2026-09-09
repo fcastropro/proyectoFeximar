@@ -12,6 +12,7 @@ defineProps({
 
 const page = usePage()
 const successMessage = computed(() => page.props.flash?.success ?? null)
+const errorMessage = computed(() => page.props.flash?.error ?? null)
 
 const destroy = (product) => {
     if (confirm(`¿Seguro que deseas eliminar el producto "${product.name}"?`)) {
@@ -40,6 +41,10 @@ const destroy = (product) => {
 
         <div v-if="successMessage" class="alert alert-success alert-dismissible fade show">
             {{ successMessage }}
+        </div>
+
+        <div v-if="errorMessage" class="alert alert-danger alert-dismissible fade show">
+            {{ errorMessage }}
         </div>
 
         <div class="row">

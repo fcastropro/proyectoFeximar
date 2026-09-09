@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FlowerType;
 use App\Models\Product;
 use App\Models\Variety;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -15,12 +16,14 @@ use Inertia\Response;
 
 class ProductController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function index(): Response
     {
         $products = Product::query()
             ->with([
-                'variety:id,flower_type_id,name,color',
-                'variety.flowerType:id,name',
+                'catalogVariety:id,flower_type_id,name,color',
+                'catalogVariety.flowerType:id,name',
             ])
             ->orderByDesc('id')
             ->get([
@@ -35,7 +38,7 @@ class ProductController extends Controller
             ])
             ->map(function (Product $product) {
                 $attributes = $product->getAttributes();
-                $relatedVariety = $product->getRelation('variety');
+                $relatedVariety = $product->getRelation('catalogVariety');
 
                 return [
                     'id' => $product->id,
@@ -81,11 +84,11 @@ class ProductController extends Controller
     public function edit(Product $product): Response
     {
         $product->loadMissing([
-            'variety:id,flower_type_id,name,color',
-            'variety.flowerType:id,name',
+            'catalogVariety:id,flower_type_id,name,color',
+            'catalogVariety.flowerType:id,name',
         ]);
 
-        $relatedVariety = $product->getRelation('variety');
+        $relatedVariety = $product->getRelation('catalogVariety');
 
         return Inertia::render('Admin/Products/Edit', [
             'product' => [
@@ -127,16 +130,28 @@ class ProductController extends Controller
 
     public function destroy(Product $product): RedirectResponse
     {
-        $path = $product->image_path;
-        $product->delete();
-
-        if ($path) {
-            Storage::disk('public')->delete($path);
+        if ($product->farmProducts()->exists()) {
+            return redirect()
+                ->route('admin.products.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar este registro porque tiene información relacionada.'
+                );
         }
 
-        return redirect()
-            ->route('admin.products.index')
-            ->with('success', 'Producto eliminado correctamente.');
+        $path = $product->image_path;
+
+        return $this->deleteOrFailFriendly(
+            function () use ($product, $path): void {
+                $product->delete();
+
+                if ($path) {
+                    Storage::disk('public')->delete($path);
+                }
+            },
+            'admin.products.index',
+            'Producto eliminado correctamente.',
+        );
     }
 
     /**

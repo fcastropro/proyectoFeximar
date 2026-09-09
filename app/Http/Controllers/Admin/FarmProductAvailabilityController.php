@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\FarmProductAvailability;
 use App\Models\FarmProductPresentation;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class FarmProductAvailabilityController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function index(): Response
     {
         $availabilities = FarmProductAvailability::query()
@@ -21,8 +24,8 @@ class FarmProductAvailabilityController extends Controller
                 'presentation.farmProduct:id,farm_id,product_id',
                 'presentation.farmProduct.farm:id,name',
                 'presentation.farmProduct.product:id,name,variety_id,category,variety,color',
-                'presentation.farmProduct.product.variety:id,flower_type_id,name,color',
-                'presentation.farmProduct.product.variety.flowerType:id,name',
+                'presentation.farmProduct.product.catalogVariety:id,flower_type_id,name,color',
+                'presentation.farmProduct.product.catalogVariety.flowerType:id,name',
             ])
             ->orderByDesc('year')
             ->orderByDesc('week_number')
@@ -81,11 +84,11 @@ class FarmProductAvailabilityController extends Controller
 
     public function destroy(FarmProductAvailability $availability): RedirectResponse
     {
-        $availability->delete();
-
-        return redirect()
-            ->route('admin.availabilities.index')
-            ->with('success', 'Disponibilidad semanal eliminada correctamente.');
+        return $this->deleteOrFailFriendly(
+            fn () => $availability->delete(),
+            'admin.availabilities.index',
+            'Disponibilidad semanal eliminada correctamente.',
+        );
     }
 
     /**
@@ -128,8 +131,8 @@ class FarmProductAvailabilityController extends Controller
         $presentation = $availability->presentation;
         $farmProduct = $presentation?->farmProduct;
         $product = $farmProduct?->product;
-        $relatedVariety = $product?->relationLoaded('variety')
-            ? $product->getRelation('variety')
+        $relatedVariety = $product?->relationLoaded('catalogVariety')
+            ? $product->getRelation('catalogVariety')
             : null;
 
         return [
@@ -159,8 +162,8 @@ class FarmProductAvailabilityController extends Controller
                 'farmProduct:id,farm_id,product_id',
                 'farmProduct.farm:id,name',
                 'farmProduct.product:id,name,variety_id,category,variety,color',
-                'farmProduct.product.variety:id,flower_type_id,name,color',
-                'farmProduct.product.variety.flowerType:id,name',
+                'farmProduct.product.catalogVariety:id,flower_type_id,name,color',
+                'farmProduct.product.catalogVariety.flowerType:id,name',
             ])
             ->where('active', true)
             ->orderByDesc('id')
@@ -168,7 +171,7 @@ class FarmProductAvailabilityController extends Controller
             ->map(function (FarmProductPresentation $presentation) {
                 $farmProduct = $presentation->farmProduct;
                 $product = $farmProduct?->product;
-                $relatedVariety = $product?->getRelation('variety');
+                $relatedVariety = $product?->getRelation('catalogVariety');
                 $flowerType = $relatedVariety?->flowerType?->name
                     ?? $product?->getAttributes()['category']
                     ?? 'Sin tipo';

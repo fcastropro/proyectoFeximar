@@ -40,7 +40,7 @@ watch(
     },
 )
 
-const submit = () => form.post(route('admin.buyer-users.store'))
+const submit = () => form.post(route('admin.users.buyers.store'))
 </script>
 
 <template>
@@ -124,7 +124,7 @@ const submit = () => form.post(route('admin.buyer-users.store'))
                     <button type="submit" class="btn btn-primary me-2" :disabled="form.processing">
                         Guardar
                     </button>
-                    <Link :href="route('admin.buyer-users.index')" class="btn btn-light">Cancelar</Link>
+                    <Link :href="route('admin.users.buyers.index')" class="btn btn-light">Cancelar</Link>
                 </form>
             </div>
         </div>

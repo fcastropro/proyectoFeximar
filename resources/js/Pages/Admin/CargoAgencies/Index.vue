@@ -9,6 +9,7 @@ defineProps({
 
 const page = usePage()
 const successMessage = computed(() => page.props.flash?.success ?? null)
+const errorMessage = computed(() => page.props.flash?.error ?? null)
 
 const destroy = (item) => {
     if (confirm(`¿Eliminar la agencia "${item.name}"?`)) {
@@ -35,6 +36,8 @@ const destroy = (item) => {
         </div>
 
         <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+        <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
         <div class="card">
             <div class="card-body">

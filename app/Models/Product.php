@@ -28,9 +28,9 @@ class Product extends Model
         ];
     }
 
-    public function variety(): BelongsTo
+    public function catalogVariety(): BelongsTo
     {
-        return $this->belongsTo(Variety::class);
+        return $this->belongsTo(Variety::class, 'variety_id');
     }
 
     public function farmProducts(): HasMany

@@ -16,8 +16,8 @@ class ProductController extends BaseFarmController
         $products = FarmProduct::query()
             ->with([
                 'product:id,name,variety_id,category,variety,color',
-                'product.variety:id,flower_type_id,name,color',
-                'product.variety.flowerType:id,name',
+                'product.catalogVariety:id,flower_type_id,name,color',
+                'product.catalogVariety.flowerType:id,name',
                 'presentations:id,farm_product_id,stem_length_cm,active',
             ])
             ->where('farm_id', $farm->id)
@@ -25,7 +25,7 @@ class ProductController extends BaseFarmController
             ->get()
             ->map(function (FarmProduct $farmProduct) {
                 $product = $farmProduct->product;
-                $variety = $product?->relationLoaded('variety') ? $product->getRelation('variety') : null;
+                $variety = $product?->relationLoaded('catalogVariety') ? $product->getRelation('catalogVariety') : null;
 
                 return [
                     'id' => $farmProduct->id,

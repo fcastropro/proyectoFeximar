@@ -15,7 +15,7 @@ const form = useForm({
     password: '',
 })
 
-const submit = () => form.put(route('admin.farm-users.update', props.farmUser.id))
+const submit = () => form.put(route('admin.users.farms.update', props.farmUser.id))
 </script>
 
 <template>
@@ -50,7 +50,7 @@ const submit = () => form.put(route('admin.farm-users.update', props.farmUser.id
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary me-2" :disabled="form.processing">Actualizar</button>
-                    <Link :href="route('admin.farm-users.index')" class="btn btn-light">Cancelar</Link>
+                    <Link :href="route('admin.users.farms.index')" class="btn btn-light">Cancelar</Link>
                 </form>
             </div>
         </div>

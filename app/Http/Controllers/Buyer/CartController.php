@@ -150,13 +150,13 @@ class CartController extends BaseBuyerController
             'items.availability.presentation.farmProduct:id,farm_id,product_id',
             'items.availability.presentation.farmProduct.farm:id,name',
             'items.availability.presentation.farmProduct.product:id,name,variety_id,variety,image_path',
-            'items.availability.presentation.farmProduct.product.variety:id,name',
+            'items.availability.presentation.farmProduct.product.catalogVariety:id,name',
             'items.availability.presentation.boxConfigs' => fn ($q) => $q->where('active', true)->with('boxType:id,code,name'),
         ]);
 
         return $cart->items->map(function (BuyerCartItem $item) use ($withPackagingOptions) {
             $product = $item->availability?->presentation?->farmProduct?->product;
-            $variety = $product?->relationLoaded('variety') ? $product->getRelation('variety') : null;
+            $variety = $product?->relationLoaded('catalogVariety') ? $product->getRelation('catalogVariety') : null;
             $presentation = $item->availability?->presentation;
 
             $row = [

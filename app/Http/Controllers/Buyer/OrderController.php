@@ -51,7 +51,7 @@ class OrderController extends BaseBuyerController
             'details.boxType:id,code,name',
             'details.availability.presentation.farmProduct.farm:id,name',
             'details.availability.presentation.farmProduct.product:id,name,variety_id,variety,image_path',
-            'details.availability.presentation.farmProduct.product.variety:id,name',
+            'details.availability.presentation.farmProduct.product.catalogVariety:id,name',
             'farmFulfillments.farm:id,name',
             'cargoAgency:id,name',
             'destinationCountry:id,name',
@@ -84,7 +84,7 @@ class OrderController extends BaseBuyerController
                 ]),
                 'details' => $order->details->map(function (OrderDetail $detail) {
                     $product = $detail->availability?->presentation?->farmProduct?->product;
-                    $variety = $product?->relationLoaded('variety') ? $product->getRelation('variety') : null;
+                    $variety = $product?->relationLoaded('catalogVariety') ? $product->getRelation('catalogVariety') : null;
 
                     return [
                         'product_name' => $product?->name,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\FarmProduct;
 use App\Models\FarmProductPresentation;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class FarmProductPresentationController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function index(): Response
     {
         $presentations = FarmProductPresentation::query()
@@ -20,8 +23,8 @@ class FarmProductPresentationController extends Controller
                 'farmProduct:id,farm_id,product_id',
                 'farmProduct.farm:id,name',
                 'farmProduct.product:id,name,variety_id,category,variety,color',
-                'farmProduct.product.variety:id,flower_type_id,name,color',
-                'farmProduct.product.variety.flowerType:id,name',
+                'farmProduct.product.catalogVariety:id,flower_type_id,name,color',
+                'farmProduct.product.catalogVariety.flowerType:id,name',
             ])
             ->orderByDesc('id')
             ->get()
@@ -75,11 +78,11 @@ class FarmProductPresentationController extends Controller
 
     public function destroy(FarmProductPresentation $presentation): RedirectResponse
     {
-        $presentation->delete();
-
-        return redirect()
-            ->route('admin.presentations.index')
-            ->with('success', 'Presentación eliminada correctamente.');
+        return $this->deleteOrFailFriendly(
+            fn () => $presentation->delete(),
+            'admin.presentations.index',
+            'Presentación eliminada correctamente.',
+        );
     }
 
     /**
@@ -118,8 +121,8 @@ class FarmProductPresentationController extends Controller
     {
         $farmProduct = $presentation->farmProduct;
         $product = $farmProduct?->product;
-        $relatedVariety = $product?->relationLoaded('variety')
-            ? $product->getRelation('variety')
+        $relatedVariety = $product?->relationLoaded('catalogVariety')
+            ? $product->getRelation('catalogVariety')
             : null;
 
         return [
@@ -146,15 +149,15 @@ class FarmProductPresentationController extends Controller
             ->with([
                 'farm:id,name',
                 'product:id,name,variety_id,category,variety,color',
-                'product.variety:id,flower_type_id,name,color',
-                'product.variety.flowerType:id,name',
+                'product.catalogVariety:id,flower_type_id,name,color',
+                'product.catalogVariety.flowerType:id,name',
             ])
             ->where('active', true)
             ->orderByDesc('id')
             ->get()
             ->map(function (FarmProduct $farmProduct) {
                 $product = $farmProduct->product;
-                $relatedVariety = $product?->getRelation('variety');
+                $relatedVariety = $product?->getRelation('catalogVariety');
                 $flowerType = $relatedVariety?->flowerType?->name
                     ?? $product?->getAttributes()['category']
                     ?? 'Sin tipo';

@@ -30,6 +30,6 @@ class Variety extends Model
 
     public function products(): HasMany
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class, 'variety_id');
     }
 }

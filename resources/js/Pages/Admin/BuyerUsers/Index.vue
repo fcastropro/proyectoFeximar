@@ -12,7 +12,7 @@ const successMessage = computed(() => page.props.flash?.success ?? null)
 
 const destroy = (item) => {
     if (confirm(`¿Eliminar asociación de ${item.user_email}?`)) {
-        router.delete(route('admin.buyer-users.destroy', item.id))
+        router.delete(route('admin.users.buyers.destroy', item.id))
     }
 }
 </script>
@@ -28,7 +28,7 @@ const destroy = (item) => {
                 </div>
             </div>
             <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-                <Link :href="route('admin.buyer-users.create')" class="btn btn-primary">
+                <Link :href="route('admin.users.buyers.create')" class="btn btn-primary">
                     Nuevo usuario comprador
                 </Link>
             </div>
@@ -70,7 +70,7 @@ const destroy = (item) => {
                                 <td class="admin-actions-column">
                                     <div class="admin-actions">
                                         <Link
-                                            :href="route('admin.buyer-users.edit', item.id)"
+                                            :href="route('admin.users.buyers.edit', item.id)"
                                             class="btn btn-success btn-xs"
                                         >
                                             Editar

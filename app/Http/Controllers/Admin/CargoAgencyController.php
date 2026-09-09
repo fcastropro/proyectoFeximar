@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CargoAgency;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,6 +12,8 @@ use Inertia\Response;
 
 class CargoAgencyController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function index(): Response
     {
         return Inertia::render('Admin/CargoAgencies/Index', [
@@ -50,11 +53,11 @@ class CargoAgencyController extends Controller
 
     public function destroy(CargoAgency $cargoAgency): RedirectResponse
     {
-        $cargoAgency->delete();
-
-        return redirect()
-            ->route('admin.cargo-agencies.index')
-            ->with('success', 'Agencia de carga eliminada.');
+        return $this->deleteOrFailFriendly(
+            fn () => $cargoAgency->delete(),
+            'admin.cargo-agencies.index',
+            'Agencia de carga eliminada.',
+        );
     }
 
     /**

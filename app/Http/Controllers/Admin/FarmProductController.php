@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Farm;
 use App\Models\FarmProduct;
 use App\Models\Product;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -14,14 +15,16 @@ use Inertia\Response;
 
 class FarmProductController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function index(): Response
     {
         $farmProducts = FarmProduct::query()
             ->with([
                 'farm:id,name',
                 'product:id,name,variety_id,category,variety,color',
-                'product.variety:id,flower_type_id,name,color',
-                'product.variety.flowerType:id,name',
+                'product.catalogVariety:id,flower_type_id,name,color',
+                'product.catalogVariety.flowerType:id,name',
             ])
             ->orderByDesc('id')
             ->get()
@@ -74,11 +77,20 @@ class FarmProductController extends Controller
 
     public function destroy(FarmProduct $farmProduct): RedirectResponse
     {
-        $farmProduct->delete();
+        if ($farmProduct->presentations()->exists()) {
+            return redirect()
+                ->route('admin.farm-products.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar este registro porque tiene información relacionada.'
+                );
+        }
 
-        return redirect()
-            ->route('admin.farm-products.index')
-            ->with('success', 'Asociación eliminada correctamente.');
+        return $this->deleteOrFailFriendly(
+            fn () => $farmProduct->delete(),
+            'admin.farm-products.index',
+            'Asociación eliminada correctamente.',
+        );
     }
 
     /**
@@ -110,8 +122,8 @@ class FarmProductController extends Controller
     private function transformFarmProduct(FarmProduct $farmProduct): array
     {
         $product = $farmProduct->product;
-        $relatedVariety = $product?->relationLoaded('variety')
-            ? $product->getRelation('variety')
+        $relatedVariety = $product?->relationLoaded('catalogVariety')
+            ? $product->getRelation('catalogVariety')
             : null;
 
         return [
@@ -149,14 +161,14 @@ class FarmProductController extends Controller
     {
         return Product::query()
             ->with([
-                'variety:id,flower_type_id,name,color',
-                'variety.flowerType:id,name',
+                'catalogVariety:id,flower_type_id,name,color',
+                'catalogVariety.flowerType:id,name',
             ])
             ->where('active', true)
             ->orderBy('name')
             ->get()
             ->map(function (Product $product) {
-                $relatedVariety = $product->getRelation('variety');
+                $relatedVariety = $product->getRelation('catalogVariety');
                 $flowerType = $relatedVariety?->flowerType?->name
                     ?? $product->getAttributes()['category']
                     ?? 'Sin tipo';

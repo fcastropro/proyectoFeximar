@@ -7,6 +7,7 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\Farm;
 use App\Models\Province;
+use App\Support\HandlesRestrictedDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -15,6 +16,8 @@ use Inertia\Response;
 
 class FarmController extends Controller
 {
+    use HandlesRestrictedDeletes;
+
     public function index(): Response
     {
         return Inertia::render('Admin/Farms/Index', [
@@ -101,11 +104,20 @@ class FarmController extends Controller
 
     public function destroy(Farm $farm): RedirectResponse
     {
-        $farm->delete();
+        if ($farm->farmProducts()->exists() || $farm->fulfillments()->exists()) {
+            return redirect()
+                ->route('admin.farms.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar este registro porque tiene información relacionada.'
+                );
+        }
 
-        return redirect()
-            ->route('admin.farms.index')
-            ->with('success', 'Finca eliminada correctamente.');
+        return $this->deleteOrFailFriendly(
+            fn () => $farm->delete(),
+            'admin.farms.index',
+            'Finca eliminada correctamente.',
+        );
     }
 
     /**

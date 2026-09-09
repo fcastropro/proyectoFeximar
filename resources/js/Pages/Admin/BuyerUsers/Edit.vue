@@ -29,7 +29,7 @@ watch(
     },
 )
 
-const submit = () => form.put(route('admin.buyer-users.update', props.buyerUser.id))
+const submit = () => form.put(route('admin.users.buyers.update', props.buyerUser.id))
 </script>
 
 <template>
@@ -100,7 +100,7 @@ const submit = () => form.put(route('admin.buyer-users.update', props.buyerUser.
                     <button type="submit" class="btn btn-primary me-2" :disabled="form.processing">
                         Actualizar
                     </button>
-                    <Link :href="route('admin.buyer-users.index')" class="btn btn-light">Cancelar</Link>
+                    <Link :href="route('admin.users.buyers.index')" class="btn btn-light">Cancelar</Link>
                 </form>
             </div>
         </div>

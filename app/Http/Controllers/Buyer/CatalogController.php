@@ -25,8 +25,8 @@ class CatalogController extends BaseBuyerController
                 'presentation.farmProduct:id,farm_id,product_id',
                 'presentation.farmProduct.farm:id,name',
                 'presentation.farmProduct.product:id,name,variety_id,category,variety,color,image_path',
-                'presentation.farmProduct.product.variety:id,flower_type_id,name,color',
-                'presentation.farmProduct.product.variety.flowerType:id,name',
+                'presentation.farmProduct.product.catalogVariety:id,flower_type_id,name,color',
+                'presentation.farmProduct.product.catalogVariety.flowerType:id,name',
             ])
             ->where('active', true)
             ->where('year', $year)
@@ -35,7 +35,7 @@ class CatalogController extends BaseBuyerController
             ->whereHas('presentation', fn ($q) => $q->where('stems_per_bunch', '>', 0));
 
         if ($request->filled('flower_type_id')) {
-            $query->whereHas('presentation.farmProduct.product.variety', function ($q) use ($request) {
+            $query->whereHas('presentation.farmProduct.product.catalogVariety', function ($q) use ($request) {
                 $q->where('flower_type_id', $request->integer('flower_type_id'));
             });
         }
@@ -63,7 +63,7 @@ class CatalogController extends BaseBuyerController
             $query->whereHas('presentation.farmProduct.product', function ($q) use ($search) {
                 $q->where('name', 'like', $search)
                     ->orWhere('variety', 'like', $search)
-                    ->orWhereHas('variety', fn ($vq) => $vq->where('name', 'like', $search));
+                    ->orWhereHas('catalogVariety', fn ($vq) => $vq->where('name', 'like', $search));
             });
         }
 
@@ -71,7 +71,7 @@ class CatalogController extends BaseBuyerController
             $presentation = $availability->presentation;
             $farmProduct = $presentation?->farmProduct;
             $product = $farmProduct?->product;
-            $variety = $product?->relationLoaded('variety') ? $product->getRelation('variety') : null;
+            $variety = $product?->relationLoaded('catalogVariety') ? $product->getRelation('catalogVariety') : null;
             $pricePerStem = $availability->price_per_stem !== null ? (float) $availability->price_per_stem : null;
             $stemsPerBunch = (int) ($presentation?->stems_per_bunch ?? 0);
 

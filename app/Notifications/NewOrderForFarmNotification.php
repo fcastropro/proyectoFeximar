@@ -10,16 +10,22 @@ use App\Support\FeximarMailBranding;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Collection;
 
-class OrderAcceptedNotification extends Notification
+class NewOrderForFarmNotification extends Notification
 {
     use Queueable;
 
+    /**
+     * @param  Collection<int, array<string, mixed>>|array<int, array<string, mixed>>  $lines
+     */
     public function __construct(
         public readonly Order $order,
         public readonly OrderFarmFulfillment $fulfillment,
         public readonly Farm $farm,
         public readonly Buyer $buyer,
+        public readonly Collection|array $lines,
+        public readonly float $farmTotal,
     ) {}
 
     /**
@@ -32,25 +38,27 @@ class OrderAcceptedNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $contactName = $this->buyer->contact_name
-            ?: $this->buyer->company_name
-            ?: 'cliente';
+        $farmGreeting = $this->farm->commercial_name
+            ?: $this->farm->name
+            ?: 'equipo de finca';
 
         $orderDate = $this->order->created_at?->timezone(config('app.timezone'))->format('Y-m-d H:i')
             ?? now()->format('Y-m-d H:i');
 
-        $total = number_format((float) $this->order->total, 2, '.', ',');
-        $actionUrl = url('/buyer/orders');
+        $lines = collect($this->lines)->values()->all();
+        $actionUrl = url('/farm/orders/'.$this->fulfillment->id);
 
         return (new MailMessage)
-            ->subject('Tu pedido está en preparación - FEXIMAR')
-            ->view('emails.orders.accepted', array_merge(FeximarMailBranding::sharedViewData(), [
-                'title' => 'Tu pedido está en preparación - FEXIMAR',
-                'contactName' => $contactName,
+            ->subject('Nuevo pedido recibido - FEXIMAR')
+            ->view('emails.orders.new-for-farm', array_merge(FeximarMailBranding::sharedViewData(), [
+                'title' => 'Nuevo pedido recibido - FEXIMAR',
+                'farmGreeting' => $farmGreeting,
                 'orderId' => $this->order->id,
-                'farmName' => $this->farm->name,
+                'buyerCompany' => $this->buyer->company_name,
                 'orderDate' => $orderDate,
-                'total' => $total,
+                'orderStatus' => $this->order->status,
+                'farmTotal' => number_format($this->farmTotal, 2, '.', ','),
+                'lines' => $lines,
                 'actionUrl' => $actionUrl,
             ]));
     }
@@ -65,6 +73,7 @@ class OrderAcceptedNotification extends Notification
             'fulfillment_id' => $this->fulfillment->id,
             'farm_id' => $this->farm->id,
             'buyer_id' => $this->buyer->id,
+            'farm_total' => $this->farmTotal,
         ];
     }
 }

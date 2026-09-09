@@ -19,6 +19,7 @@ class BuyerCheckoutService
         private readonly BuyerCartService $cartService,
         private readonly OrderFulfillmentService $fulfillmentService,
         private readonly ActivityLogger $activityLogger,
+        private readonly FarmNewOrderNotifier $farmNewOrderNotifier,
     ) {}
 
     /**
@@ -40,7 +41,7 @@ class BuyerCheckoutService
         $this->assertPayment($buyer, $payload['payment_condition'], $payload['credit_days'] ?? null);
         $this->assertLogistics($payload);
 
-        return DB::transaction(function () use ($buyer, $user, $payload) {
+        $order = DB::transaction(function () use ($buyer, $user, $payload) {
             $cart = $this->cartService->activeCart($buyer, $user);
             $cart->load('items');
 
@@ -170,6 +171,11 @@ class BuyerCheckoutService
 
             return $order->fresh(['details', 'farmFulfillments', 'cargoAgency', 'destinationCountry']);
         });
+
+        // El correo se envía solo después de confirmar el pedido (fuera de la transacción).
+        $this->farmNewOrderNotifier->notifyFarmsForOrder($order);
+
+        return $order;
     }
 
     /**

@@ -135,13 +135,13 @@ test('farm marking order in preparation sends OrderAcceptedNotification to buyer
 
             $mail = $notification->toMail($notifiable);
 
-            expect($mail->subject)->toBe('Tu pedido está en preparación - FEXIMAR');
-
-            $rendered = implode(' ', $mail->introLines);
-
-            expect($rendered)->toContain((string) $ctx['order']->id)
-                ->and($rendered)->toContain($ctx['farm']->name)
-                ->and($rendered)->toContain('En preparación');
+            expect($mail->subject)->toBe('Tu pedido está en preparación - FEXIMAR')
+                ->and($mail->view)->toBe('emails.orders.accepted')
+                ->and($mail->viewData['orderId'])->toBe($ctx['order']->id)
+                ->and($mail->viewData['farmName'])->toBe($ctx['farm']->name)
+                ->and($mail->viewData['brand'])->toBe('FEXIMAR')
+                ->and($mail->viewData['logoUrl'])->toContain(rtrim((string) config('app.url'), '/'))
+                ->and($mail->viewData['actionUrl'])->toContain(rtrim((string) config('app.url'), '/'));
 
             return true;
         }

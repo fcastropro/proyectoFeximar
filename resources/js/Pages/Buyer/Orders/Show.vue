@@ -52,7 +52,10 @@ const fulfillmentTimeline = (fulfillment) => [
                     <span>{{ statusLabel(order.status) }} · {{ order.created_at }}</span>
                 </div>
             </div>
-            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex gap-2">
+                <a :href="route('buyer.orders.pdf', order.id)" class="btn btn-success">
+                    Descargar PDF
+                </a>
                 <Link :href="route('buyer.orders.index')" class="btn btn-light">
                     Volver
                 </Link>

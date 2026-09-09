@@ -40,12 +40,12 @@ class AdminReportService
     public function orderPdf(Order $order): SymfonyResponse
     {
         $order->load([
-            'buyer:id,company_name,contact_name,email',
+            'buyer:id,company_name,contact_name,email,country,city',
             'cargoAgency:id,name',
             'destinationCountry:id,name',
             'details.boxType:id,code,name',
             'details.availability.presentation.farmProduct.farm:id,name',
-            'details.availability.presentation.farmProduct.product:id,name,variety,variety_id',
+            'details.availability.presentation.farmProduct.product:id,name,variety,variety_id,color',
             'details.availability.presentation.farmProduct.product.catalogVariety:id,name',
             'details.availability.presentation:id,stem_length_cm,stems_per_bunch',
             'farmFulfillments.farm:id,name',
@@ -69,6 +69,7 @@ class AdminReportService
                 'farm' => $farmProduct?->farm?->name,
                 'product' => $product?->name,
                 'variety' => $varietyName,
+                'color' => $product?->getAttributes()['color'] ?? null,
                 'length' => $presentation?->stem_length_cm,
                 'bunches' => $detail->bunches,
                 'stems_per_bunch' => $detail->stems_per_bunch,
@@ -76,12 +77,13 @@ class AdminReportService
                 'box_type' => $detail->boxType?->code ?? $detail->boxType?->name,
                 'boxes' => $detail->boxes,
                 'price_per_stem' => $detail->price_per_stem,
+                'unit_price' => $detail->unit_price,
                 'subtotal' => $detail->subtotal,
             ];
         });
 
         return $this->download('pdf.order', [
-            'title' => 'PEDIDO #'.$order->id,
+            'title' => 'DETALLE DEL PEDIDO #'.$order->id,
             'order' => $order,
             'details' => $details,
             'paid' => $paid,

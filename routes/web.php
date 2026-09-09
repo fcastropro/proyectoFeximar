@@ -198,6 +198,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/checkout', [BuyerCartController::class, 'checkoutForm'])->name('checkout');
         Route::post('/checkout', [BuyerCartController::class, 'checkout'])->name('checkout.store');
         Route::get('/orders', [BuyerOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}/pdf', [BuyerOrderController::class, 'pdf'])->name('orders.pdf');
         Route::get('/orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
         Route::get('/profile', [BuyerProfileController::class, 'show'])->name('profile');
     });

@@ -11,7 +11,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class OrderAcceptedNotification extends Notification
+class OrderReadyNotification extends Notification
 {
     use Queueable;
 
@@ -20,6 +20,7 @@ class OrderAcceptedNotification extends Notification
         public readonly OrderFarmFulfillment $fulfillment,
         public readonly Farm $farm,
         public readonly Buyer $buyer,
+        public readonly float $farmTotal,
     ) {}
 
     /**
@@ -36,21 +37,21 @@ class OrderAcceptedNotification extends Notification
             ?: $this->buyer->company_name
             ?: 'cliente';
 
-        $orderDate = $this->order->created_at?->timezone(config('app.timezone'))->format('Y-m-d H:i')
+        $eventDate = $this->fulfillment->ready_at?->timezone(config('app.timezone'))->format('Y-m-d H:i')
             ?? now()->format('Y-m-d H:i');
 
-        $total = number_format((float) $this->order->total, 2, '.', ',');
         $actionUrl = url('/buyer/orders');
 
         return (new MailMessage)
-            ->subject('Tu pedido está en preparación - FEXIMAR')
-            ->view('emails.orders.accepted', array_merge(FeximarMailBranding::sharedViewData(), [
-                'title' => 'Tu pedido está en preparación - FEXIMAR',
+            ->subject('Tu pedido está listo - FEXIMAR')
+            ->view('emails.orders.ready', array_merge(FeximarMailBranding::sharedViewData(), [
+                'title' => 'Tu pedido está listo - FEXIMAR',
                 'contactName' => $contactName,
+                'buyerCompany' => $this->buyer->company_name,
                 'orderId' => $this->order->id,
                 'farmName' => $this->farm->name,
-                'orderDate' => $orderDate,
-                'total' => $total,
+                'eventDate' => $eventDate,
+                'farmTotal' => number_format($this->farmTotal, 2, '.', ','),
                 'actionUrl' => $actionUrl,
             ]));
     }
@@ -65,6 +66,8 @@ class OrderAcceptedNotification extends Notification
             'fulfillment_id' => $this->fulfillment->id,
             'farm_id' => $this->farm->id,
             'buyer_id' => $this->buyer->id,
+            'farm_total' => $this->farmTotal,
+            'status' => 'ready',
         ];
     }
 }

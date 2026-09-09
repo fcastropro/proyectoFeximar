@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Buyer;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Services\Admin\AdminReportService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class OrderController extends BaseBuyerController
 {
+    public function __construct(
+        private readonly AdminReportService $reports,
+    ) {}
     public function index(Request $request): Response
     {
         $buyer = $this->currentBuyer($request);
@@ -89,6 +94,7 @@ class OrderController extends BaseBuyerController
                     return [
                         'product_name' => $product?->name,
                         'variety' => $variety?->name ?? ($product?->getAttributes()['variety'] ?? null),
+                        'color' => $product?->getAttributes()['color'] ?? null,
                         'farm_name' => $detail->availability?->presentation?->farmProduct?->farm?->name,
                         'stem_length_cm' => $detail->availability?->presentation?->stem_length_cm,
                         'bunches' => $detail->bunches,
@@ -106,5 +112,16 @@ class OrderController extends BaseBuyerController
                 }),
             ],
         ]);
+    }
+
+    public function pdf(Request $request, Order $order): SymfonyResponse
+    {
+        $buyer = $this->currentBuyer($request);
+
+        if ($order->buyer_id !== $buyer->id) {
+            abort(403);
+        }
+
+        return $this->reports->orderPdf($order);
     }
 }

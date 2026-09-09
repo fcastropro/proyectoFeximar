@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Farm;
 use App\Models\OrderDetail;
 use App\Models\OrderFarmFulfillment;
 use App\Notifications\OrderAcceptedNotification;
+use App\Notifications\OrderDispatchedNotification;
+use App\Notifications\OrderReadyNotification;
 use App\Services\Admin\ActivityLogger;
 use App\Services\FarmAvailabilityReservationService;
 use Illuminate\Http\RedirectResponse;
@@ -208,6 +210,14 @@ class OrderController extends BaseFarmController
             $this->notifyBuyerOrderInPreparation($fulfillment->fresh());
         }
 
+        if ($newStatus === 'ready' && $previousStatus !== 'ready') {
+            $this->notifyBuyerOrderReady($fulfillment->fresh());
+        }
+
+        if ($newStatus === 'dispatched' && $previousStatus !== 'dispatched') {
+            $this->notifyBuyerOrderDispatched($fulfillment->fresh());
+        }
+
         return redirect()
             ->route('farm.orders.show', $fulfillment->id)
             ->with('success', 'Estado actualizado correctamente.');
@@ -215,10 +225,88 @@ class OrderController extends BaseFarmController
 
     private function notifyBuyerOrderInPreparation(OrderFarmFulfillment $fulfillment): void
     {
-        $fulfillment->loadMissing([
+        $context = $this->buyerNotificationContext($fulfillment, OrderAcceptedNotification::class);
+
+        if ($context === null) {
+            return;
+        }
+
+        try {
+            Notification::route('mail', $context['email'])
+                ->notify(new OrderAcceptedNotification(
+                    $context['order'],
+                    $context['fulfillment'],
+                    $context['farm'],
+                    $context['buyer'],
+                ));
+        } catch (Throwable $exception) {
+            $this->logBuyerNotificationFailure(OrderAcceptedNotification::class, $context, $exception);
+        }
+    }
+
+    private function notifyBuyerOrderReady(OrderFarmFulfillment $fulfillment): void
+    {
+        $context = $this->buyerNotificationContext($fulfillment, OrderReadyNotification::class);
+
+        if ($context === null) {
+            return;
+        }
+
+        try {
+            Notification::route('mail', $context['email'])
+                ->notify(new OrderReadyNotification(
+                    $context['order'],
+                    $context['fulfillment'],
+                    $context['farm'],
+                    $context['buyer'],
+                    $context['farmTotal'],
+                ));
+        } catch (Throwable $exception) {
+            $this->logBuyerNotificationFailure(OrderReadyNotification::class, $context, $exception);
+        }
+    }
+
+    private function notifyBuyerOrderDispatched(OrderFarmFulfillment $fulfillment): void
+    {
+        $context = $this->buyerNotificationContext($fulfillment, OrderDispatchedNotification::class, withLogistics: true);
+
+        if ($context === null) {
+            return;
+        }
+
+        try {
+            Notification::route('mail', $context['email'])
+                ->notify(new OrderDispatchedNotification(
+                    $context['order'],
+                    $context['fulfillment'],
+                    $context['farm'],
+                    $context['buyer'],
+                    $context['farmTotal'],
+                ));
+        } catch (Throwable $exception) {
+            $this->logBuyerNotificationFailure(OrderDispatchedNotification::class, $context, $exception);
+        }
+    }
+
+    /**
+     * @return array{fulfillment: OrderFarmFulfillment, order: \App\Models\Order, buyer: \App\Models\Buyer, farm: \App\Models\Farm, email: string, farmTotal: float}|null
+     */
+    private function buyerNotificationContext(
+        OrderFarmFulfillment $fulfillment,
+        string $notificationClass,
+        bool $withLogistics = false,
+    ): ?array {
+        $relations = [
             'order.buyer',
             'farm:id,name',
-        ]);
+        ];
+
+        if ($withLogistics) {
+            $relations[] = 'order.cargoAgency:id,name';
+            $relations[] = 'order.destinationCountry:id,name';
+        }
+
+        $fulfillment->loadMissing($relations);
 
         $order = $fulfillment->order;
         $buyer = $order?->buyer;
@@ -226,28 +314,40 @@ class OrderController extends BaseFarmController
         $email = filled($buyer?->email) ? trim((string) $buyer->email) : null;
 
         if (! $order || ! $buyer || ! $farm || ! $email) {
-            Log::warning('No se envió OrderAcceptedNotification: faltan datos de comprador/finca/email.', [
+            Log::warning("No se envió {$notificationClass}: faltan datos de comprador/finca/email.", [
                 'fulfillment_id' => $fulfillment->id,
                 'order_id' => $fulfillment->order_id,
                 'buyer_id' => $buyer?->id,
                 'farm_id' => $farm?->id,
             ]);
 
-            return;
+            return null;
         }
 
-        try {
-            Notification::route('mail', $email)
-                ->notify(new OrderAcceptedNotification($order, $fulfillment, $farm, $buyer));
-        } catch (Throwable $exception) {
-            Log::error('Error al enviar OrderAcceptedNotification al comprador.', [
-                'fulfillment_id' => $fulfillment->id,
-                'order_id' => $order->id,
-                'buyer_id' => $buyer->id,
-                'email' => $email,
-                'exception' => $exception->getMessage(),
-            ]);
-        }
+        $farmTotal = round((float) $this->farmLines($order->id, $farm->id)->sum('subtotal'), 2);
+
+        return [
+            'fulfillment' => $fulfillment,
+            'order' => $order,
+            'buyer' => $buyer,
+            'farm' => $farm,
+            'email' => $email,
+            'farmTotal' => $farmTotal,
+        ];
+    }
+
+    /**
+     * @param  array{fulfillment: OrderFarmFulfillment, order: \App\Models\Order, buyer: \App\Models\Buyer, email: string}  $context
+     */
+    private function logBuyerNotificationFailure(string $notificationClass, array $context, Throwable $exception): void
+    {
+        Log::error("Error al enviar {$notificationClass} al comprador.", [
+            'fulfillment_id' => $context['fulfillment']->id,
+            'order_id' => $context['order']->id,
+            'buyer_id' => $context['buyer']->id,
+            'email' => $context['email'],
+            'exception' => $exception->getMessage(),
+        ]);
     }
 
     private function assertOwned(OrderFarmFulfillment $fulfillment, int $farmId): void

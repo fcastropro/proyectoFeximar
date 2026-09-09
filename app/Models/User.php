@@ -26,6 +26,14 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Notificación personalizada de recuperación de contraseña FEXIMAR.
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new \App\Notifications\ResetPassword($token));
+    }
+
     public function farmUsers(): HasMany
     {
         return $this->hasMany(FarmUser::class);

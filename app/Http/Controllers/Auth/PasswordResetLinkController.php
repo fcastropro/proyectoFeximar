@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -33,19 +34,34 @@ class PasswordResetLinkController extends Controller
             'email' => 'required|email',
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
+        $email = $request->string('email')->toString();
+
+        if (! User::query()->where('email', $email)->exists()) {
+            throw ValidationException::withMessages([
+                'email' => ['No se encontró una cuenta registrada con este correo electrónico.'],
+            ]);
+        }
+
         $status = Password::sendResetLink(
             $request->only('email')
         );
 
-        if ($status == Password::RESET_LINK_SENT) {
-            return back()->with('status', __($status));
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with(
+                'status',
+                'Se ha enviado un enlace de recuperación a tu correo electrónico. Revisa tu bandeja de entrada.'
+            );
         }
 
+        if ($status === Password::RESET_THROTTLED) {
+            throw ValidationException::withMessages([
+                'email' => ['Has realizado demasiados intentos. Espera unos minutos antes de volver a intentarlo.'],
+            ]);
+        }
+
+        // Nunca exponer claves internas passwords.*.
         throw ValidationException::withMessages([
-            'email' => [trans($status)],
+            'email' => ['No se pudo enviar el enlace de recuperación. Intenta nuevamente más tarde.'],
         ]);
     }
 }

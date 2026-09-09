@@ -40,9 +40,6 @@ class NewPasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
@@ -55,15 +52,26 @@ class NewPasswordController extends Controller
             }
         );
 
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        if ($status == Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('status', __($status));
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()
+                ->route('login')
+                ->with('status', 'Tu contraseña fue restablecida correctamente. Ya puedes iniciar sesión.');
         }
 
+        if ($status === Password::RESET_THROTTLED) {
+            throw ValidationException::withMessages([
+                'email' => ['Has realizado demasiados intentos. Espera unos minutos antes de volver a intentarlo.'],
+            ]);
+        }
+
+        $message = match ($status) {
+            Password::INVALID_TOKEN => 'El enlace de recuperación no es válido o ha expirado. Solicita uno nuevo.',
+            Password::INVALID_USER => 'No se encontró una cuenta registrada con este correo electrónico.',
+            default => 'No se pudo restablecer la contraseña. Solicita un nuevo enlace e intenta nuevamente.',
+        };
+
         throw ValidationException::withMessages([
-            'email' => [trans($status)],
+            'email' => [$message],
         ]);
     }
 }

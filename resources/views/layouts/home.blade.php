@@ -2163,6 +2163,14 @@
                                                 </span>
                                             @enderror
                                         </label>
+                                        <div style="text-align:right; margin:-6px 0 14px;">
+                                            <a
+                                                href="{{ route('password.request') }}"
+                                                style="color:var(--rose-crimson); font-size:13px; text-decoration:underline;"
+                                            >
+                                                ¿Olvidaste tu contraseña?
+                                            </a>
+                                        </div>
                                         <div style="text-align:center;">
                                             <button type="submit" class="theme-btn" style="width:100%; padding:14px;"><i class="fa fa-lock"></i> INICIAR SESIÓN</button>
                                         </div>

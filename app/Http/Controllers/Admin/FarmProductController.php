@@ -136,9 +136,7 @@ class FarmProductController extends Controller
             'variety_name' => $relatedVariety?->name
                 ?? $product?->getAttributes()['variety']
                 ?? null,
-            'color' => $relatedVariety?->color
-                ?? $product?->getAttributes()['color']
-                ?? null,
+            'color' => $product?->getAttributes()['color'] ?? null,
             'active' => (bool) $farmProduct->active,
         ];
     }
@@ -175,8 +173,7 @@ class FarmProductController extends Controller
                 $varietyName = $relatedVariety?->name
                     ?? $product->getAttributes()['variety']
                     ?? 'Sin variedad';
-                $color = $relatedVariety?->color
-                    ?? $product->getAttributes()['color']
+                $color = $product->getAttributes()['color']
                     ?? 'Sin color';
 
                 return [

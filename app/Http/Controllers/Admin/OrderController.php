@@ -587,8 +587,7 @@ class OrderController extends Controller
             'variety_name' => $relatedVariety?->name
                 ?? $product?->getAttributes()['variety']
                 ?? 'Sin variedad',
-            'color' => $relatedVariety?->color
-                ?? $product?->getAttributes()['color']
+            'color' => $product?->getAttributes()['color']
                 ?? 'Sin color',
             'stem_length_cm' => $presentation?->stem_length_cm ?? '—',
             'available_stems' => (int) ($availability?->available_stems ?? 0),

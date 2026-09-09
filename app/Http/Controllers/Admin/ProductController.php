@@ -47,8 +47,7 @@ class ProductController extends Controller
                         ?? ($attributes['category'] ?? null),
                     'variety_name' => $relatedVariety?->name
                         ?? ($attributes['variety'] ?? null),
-                    'color' => $relatedVariety?->color
-                        ?? ($attributes['color'] ?? null),
+                    'color' => $attributes['color'] ?? null,
                     'image_url' => $product->imageUrl(),
                     'active' => $product->active,
                 ];

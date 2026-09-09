@@ -210,8 +210,7 @@ class AvailabilityController extends BaseFarmController
                 $varietyName = $variety?->name
                     ?? $product?->getAttributes()['variety']
                     ?? 'Sin variedad';
-                $color = $variety?->color
-                    ?? $product?->getAttributes()['color']
+                $color = $product?->getAttributes()['color']
                     ?? 'Sin color';
 
                 return [

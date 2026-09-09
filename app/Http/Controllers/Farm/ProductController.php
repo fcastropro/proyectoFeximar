@@ -32,7 +32,7 @@ class ProductController extends BaseFarmController
                     'product_name' => $product?->name,
                     'variety_name' => $variety?->name ?? $product?->getAttributes()['variety'] ?? null,
                     'flower_type' => $variety?->flowerType?->name ?? $product?->getAttributes()['category'] ?? null,
-                    'color' => $variety?->color ?? $product?->getAttributes()['color'] ?? null,
+                    'color' => $product?->getAttributes()['color'] ?? null,
                     'active' => (bool) $farmProduct->active,
                     'presentations' => $farmProduct->presentations
                         ->where('active', true)

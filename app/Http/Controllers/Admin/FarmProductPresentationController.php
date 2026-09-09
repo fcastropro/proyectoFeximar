@@ -164,8 +164,7 @@ class FarmProductPresentationController extends Controller
                 $varietyName = $relatedVariety?->name
                     ?? $product?->getAttributes()['variety']
                     ?? 'Sin variedad';
-                $color = $relatedVariety?->color
-                    ?? $product?->getAttributes()['color']
+                $color = $product?->getAttributes()['color']
                     ?? 'Sin color';
                 $farmName = $farmProduct->farm?->name ?? 'Sin finca';
 

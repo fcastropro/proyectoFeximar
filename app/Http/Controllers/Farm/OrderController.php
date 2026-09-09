@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Farm;
 
 use App\Models\OrderDetail;
 use App\Models\OrderFarmFulfillment;
+use App\Notifications\OrderAcceptedNotification;
 use App\Services\Admin\ActivityLogger;
 use App\Services\FarmAvailabilityReservationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class OrderController extends BaseFarmController
 {
@@ -135,6 +139,7 @@ class OrderController extends BaseFarmController
         ]);
 
         $newStatus = $validated['status'];
+        $previousStatus = $fulfillment->status;
 
         if (! $fulfillment->canTransitionTo($newStatus)) {
             return back()->withErrors([
@@ -199,9 +204,50 @@ class OrderController extends BaseFarmController
             $fulfillment->id,
         );
 
+        if ($newStatus === 'preparing' && $previousStatus !== 'preparing') {
+            $this->notifyBuyerOrderInPreparation($fulfillment->fresh());
+        }
+
         return redirect()
             ->route('farm.orders.show', $fulfillment->id)
             ->with('success', 'Estado actualizado correctamente.');
+    }
+
+    private function notifyBuyerOrderInPreparation(OrderFarmFulfillment $fulfillment): void
+    {
+        $fulfillment->loadMissing([
+            'order.buyer',
+            'farm:id,name',
+        ]);
+
+        $order = $fulfillment->order;
+        $buyer = $order?->buyer;
+        $farm = $fulfillment->farm;
+        $email = filled($buyer?->email) ? trim((string) $buyer->email) : null;
+
+        if (! $order || ! $buyer || ! $farm || ! $email) {
+            Log::warning('No se envió OrderAcceptedNotification: faltan datos de comprador/finca/email.', [
+                'fulfillment_id' => $fulfillment->id,
+                'order_id' => $fulfillment->order_id,
+                'buyer_id' => $buyer?->id,
+                'farm_id' => $farm?->id,
+            ]);
+
+            return;
+        }
+
+        try {
+            Notification::route('mail', $email)
+                ->notify(new OrderAcceptedNotification($order, $fulfillment, $farm, $buyer));
+        } catch (Throwable $exception) {
+            Log::error('Error al enviar OrderAcceptedNotification al comprador.', [
+                'fulfillment_id' => $fulfillment->id,
+                'order_id' => $order->id,
+                'buyer_id' => $buyer->id,
+                'email' => $email,
+                'exception' => $exception->getMessage(),
+            ]);
+        }
     }
 
     private function assertOwned(OrderFarmFulfillment $fulfillment, int $farmId): void

@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PresentationBoxConfigController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\VarietyController;
 use App\Http\Controllers\Admin\Users\AdminAccountController;
 use App\Http\Controllers\Admin\Users\BuyerAccountController;
 use App\Http\Controllers\Admin\Users\FarmAccountController;
@@ -59,6 +60,7 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('farms', FarmController::class)->except(['show']);
         Route::resource('products', ProductController::class)->except(['show']);
+        Route::resource('varieties', VarietyController::class)->except(['show']);
         Route::resource('farm-products', FarmProductController::class)->except(['show']);
         Route::resource('presentations', FarmProductPresentationController::class)->except(['show']);
         Route::resource('box-configs', PresentationBoxConfigController::class)

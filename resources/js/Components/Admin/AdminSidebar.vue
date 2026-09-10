@@ -30,6 +30,9 @@ import { Link } from '@inertiajs/vue3'
                             <Link :href="route('admin.products.index')">Productos</Link>
                         </li>
                         <li>
+                            <Link :href="route('admin.varieties.index')">Variedades</Link>
+                        </li>
+                        <li>
                             <Link :href="route('admin.farm-products.index')">Productos por finca</Link>
                         </li>
                         <li>

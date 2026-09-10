@@ -30,7 +30,8 @@ import { Link } from '@inertiajs/vue3'
                             <Link :href="route('admin.products.index')">Productos</Link>
                         </li>
                         <li>
-                            <Link :href="route('admin.varieties.index')">Variedades</Link>
+                            <!-- Hardcoded path like Dashboard: avoids Ziggy crash if admin.varieties.* missing from stale route:cache -->
+                            <Link href="/admin/varieties">Variedades</Link>
                         </li>
                         <li>
                             <Link :href="route('admin.farm-products.index')">Productos por finca</Link>

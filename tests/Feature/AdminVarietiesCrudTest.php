@@ -240,3 +240,12 @@ test('new active variety appears in product catalog selector', function () {
             'flower_type_id' => $flowerType->id,
         ]);
 });
+
+test('admin varieties index route exists and is reachable', function () {
+    expect(route('admin.varieties.index', absolute: false))->toBe('/admin/varieties');
+
+    $this->actingAs(varietyAdminUser())
+        ->get('/admin/varieties')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Admin/Varieties/Index'));
+});
